@@ -1,12 +1,4 @@
 import { API_CONFIG, WALLET_CONFIG } from "@/lib/config"
-import { apiRequest as baseApiRequest, validateWalletAddress as baseValidateWalletAddress } from "./api-client"
-import {
-  mockPortfolioData,
-  mockAssetAnalysis,
-  mockAutomationSettings,
-  mockNotifications,
-  mockTargetInfo,
-} from "./mock-data"
 
 // Base API URL from config
 const API_BASE_URL = API_CONFIG.baseUrl
@@ -90,17 +82,35 @@ function validateWalletAddress(address: string): boolean {
 }
 
 /**
+ * Check if a wallet has an existing portfolio
+ */
+export async function checkWalletPortfolio(walletAddress: string) {
+  try {
+    const data = await apiRequest(`/checkportfolio/${walletAddress}`)
+
+    return {
+      has_portfolio: data.has_portfolio || false,
+    }
+  } catch (error) {
+    console.error("Error checking wallet portfolio:", error)
+    return {
+      has_portfolio: false,
+    }
+  }
+}
+
+/**
  * Get portfolio data for a wallet address
  */
 export async function getPortfolioData(walletAddress: string) {
   // Validate wallet address
-  if (!baseValidateWalletAddress(walletAddress)) {
+  if (!validateWalletAddress(walletAddress)) {
     console.error("Invalid wallet address format:", walletAddress)
-    return mockPortfolioData
+    return getMockPortfolioData()
   }
 
   try {
-    const data = await baseApiRequest(`/dashboard/${walletAddress}`)
+    const data = await apiRequest(`/dashboard/${walletAddress}`)
 
     // Transform the API response to match our frontend data structure
     return {
@@ -131,7 +141,7 @@ export async function getPortfolioData(walletAddress: string) {
     }
 
     // Return mock data as fallback
-    return mockPortfolioData
+    return getMockPortfolioData()
   }
 }
 
@@ -139,13 +149,8 @@ export async function getPortfolioData(walletAddress: string) {
  * Get asset analysis data for a wallet address
  */
 export async function getAssetAnalysis(walletAddress: string) {
-  if (!baseValidateWalletAddress(walletAddress)) {
-    console.error("Invalid wallet address format:", walletAddress)
-    return mockAssetAnalysis
-  }
-
   try {
-    const data = await baseApiRequest(`/analyze/${walletAddress}`)
+    const data = await apiRequest(`/analyze/${walletAddress}`)
 
     return {
       average_apy: data.average_apy || 0,
@@ -156,7 +161,7 @@ export async function getAssetAnalysis(walletAddress: string) {
   } catch (error) {
     console.error("Failed to fetch asset analysis:", error)
     // Return mock data as fallback
-    return mockAssetAnalysis
+    return getMockAssetAnalysis()
   }
 }
 
@@ -164,13 +169,8 @@ export async function getAssetAnalysis(walletAddress: string) {
  * Get automation settings for a wallet address
  */
 export async function getAutomationSettings(walletAddress: string) {
-  if (!baseValidateWalletAddress(walletAddress)) {
-    console.error("Invalid wallet address format:", walletAddress)
-    return mockAutomationSettings
-  }
-
   try {
-    const data = await baseApiRequest(`/automation/${walletAddress}`)
+    const data = await apiRequest(`/automation/${walletAddress}`)
 
     return {
       automation: data.automation || [],
@@ -181,7 +181,7 @@ export async function getAutomationSettings(walletAddress: string) {
   } catch (error) {
     console.error("Failed to fetch automation settings:", error)
     // Return mock data as fallback
-    return mockAutomationSettings
+    return getMockAutomationSettings()
   }
 }
 
@@ -189,28 +189,11 @@ export async function getAutomationSettings(walletAddress: string) {
  * Update automation settings for a wallet address
  */
 export async function updateAutomationSettings(walletAddress: string, settingsType: string, settings: any) {
-  if (!baseValidateWalletAddress(walletAddress)) {
-    console.error("Invalid wallet address format:", walletAddress)
-    return {
-      success: true,
-      message: "Settings updated successfully (mock)",
-      settings: settings,
-    }
-  }
-
   try {
-    const data = await baseApiRequest(
-      `/automation/${walletAddress}/${settingsType}`,
-      {
-        method: "POST",
-        body: JSON.stringify(settings),
-      },
-      {
-        success: true,
-        message: "Settings updated successfully",
-        settings: settings,
-      },
-    )
+    const data = await apiRequest(`/automation/${walletAddress}/${settingsType}`, {
+      method: "POST",
+      body: JSON.stringify(settings),
+    })
 
     return data
   } catch (error) {
@@ -218,7 +201,7 @@ export async function updateAutomationSettings(walletAddress: string, settingsTy
     // Return mock success response
     return {
       success: true,
-      message: "Settings updated successfully (mock)",
+      message: "Settings updated successfully",
       settings: settings,
     }
   }
@@ -228,18 +211,50 @@ export async function updateAutomationSettings(walletAddress: string, settingsTy
  * Get notifications for a wallet address
  */
 export async function getNotifications(walletAddress: string) {
-  if (!baseValidateWalletAddress(walletAddress)) {
-    console.error("Invalid wallet address format:", walletAddress)
-    return mockNotifications
-  }
-
   try {
-    const data = await baseApiRequest(`/notification/${walletAddress}`, {}, mockNotifications)
+    const data = await apiRequest(`/notification/${walletAddress}`)
     return data
   } catch (error) {
     console.error("Failed to fetch notifications:", error)
     // Return mock data as fallback
-    return mockNotifications
+    return getMockNotifications()
+  }
+}
+
+/**
+ * Start a chatbot session for a wallet address
+ */
+export async function startChatbotSession(walletAddress: string) {
+  try {
+    const data = await apiRequest(`/chatbot/start/${walletAddress}`, {
+      method: "POST",
+    })
+    return data
+  } catch (error) {
+    console.error("Error starting chatbot session:", error)
+    return {
+      status: "error",
+      message: error instanceof Error ? error.message : "Unknown error occurred",
+    }
+  }
+}
+
+/**
+ * Send a message to the chatbot for a wallet address
+ */
+export async function sendChatbotMessage(walletAddress: string, message: string) {
+  try {
+    const data = await apiRequest(`/chatbot/run/${walletAddress}`, {
+      method: "POST",
+      body: JSON.stringify({ text: message }),
+    })
+    return data
+  } catch (error) {
+    console.error("Error sending message to chatbot:", error)
+    return {
+      status: "error",
+      message: error instanceof Error ? error.message : "Unknown error occurred",
+    }
   }
 }
 
@@ -247,25 +262,20 @@ export async function getNotifications(walletAddress: string) {
  * Get target information for a wallet address
  */
 export async function getTargetInfo(walletAddress: string) {
-  if (!baseValidateWalletAddress(walletAddress)) {
-    console.error("Invalid wallet address format:", walletAddress)
-    return mockTargetInfo
-  }
-
   try {
-    const data = await baseApiRequest(`/target/${walletAddress}`, {}, mockTargetInfo)
+    const data = await apiRequest(`/target/${walletAddress}`)
     return data
   } catch (error) {
     console.error("Failed to fetch target info:", error)
     // Return mock data as fallback
-    return mockTargetInfo
+    return getMockTargetInfo()
   }
 }
 
 // Helper functions to transform API data to frontend format
 
 function transformWeightsToAssetAllocation(weights: any) {
-  if (!weights) return mockPortfolioData.assetAllocation
+  if (!weights) return getMockPortfolioData().assetAllocation
 
   try {
     const parsedWeights = typeof weights === "string" ? JSON.parse(weights) : weights
@@ -278,12 +288,12 @@ function transformWeightsToAssetAllocation(weights: any) {
     }))
   } catch (error) {
     console.error("Error parsing weights:", error)
-    return mockPortfolioData.assetAllocation
+    return getMockPortfolioData().assetAllocation
   }
 }
 
 function transformAiInsights(insights: any[]) {
-  if (!insights || !Array.isArray(insights)) return mockPortfolioData.aiInsights
+  if (!insights || !Array.isArray(insights)) return getMockPortfolioData().aiInsights
 
   try {
     const marketAnalysis = insights.find((i) => i.title === "시장분석")?.desc || ""
@@ -297,7 +307,7 @@ function transformAiInsights(insights: any[]) {
     }
   } catch (error) {
     console.error("Error transforming AI insights:", error)
-    return mockPortfolioData.aiInsights
+    return getMockPortfolioData().aiInsights
   }
 }
 
@@ -323,7 +333,7 @@ function generatePerformanceData() {
 }
 
 function transformLstData(lstData: any[]) {
-  if (!lstData || !Array.isArray(lstData)) return mockPortfolioData.lstStaking
+  if (!lstData || !Array.isArray(lstData)) return getMockPortfolioData().lstStaking
 
   try {
     return lstData.slice(0, 3).map((lst) => ({
@@ -335,7 +345,7 @@ function transformLstData(lstData: any[]) {
     }))
   } catch (error) {
     console.error("Error transforming LST data:", error)
-    return mockPortfolioData.lstStaking
+    return getMockPortfolioData().lstStaking
   }
 }
 

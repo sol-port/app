@@ -2,10 +2,14 @@
 
 import { useState, useEffect } from "react"
 import { useWallet } from "@solana/wallet-adapter-react"
-import { Button } from "@/components/ui/button"
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui"
+import { Button } from "@/components/ui/button"
 import { Check, Loader2 } from "lucide-react"
 import { useLanguage } from "@/context/language-context"
+import { API_CONFIG } from "@/lib/config"
+
+// Base API URL from config
+const API_BASE_URL = API_CONFIG.baseUrl
 
 interface WalletConnectionProps {
   onComplete: () => void
@@ -30,7 +34,7 @@ export function WalletConnection({ onComplete }: WalletConnectionProps) {
 
       setIsCheckingPortfolio(true)
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/checkportfolio/${publicKey.toString()}`)
+        const response = await fetch(`${API_BASE_URL}/checkportfolio/${publicKey.toString()}`)
         if (response.ok) {
           const data = await response.json()
           setHasExistingPortfolio(data.has_portfolio)

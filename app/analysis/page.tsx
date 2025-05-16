@@ -22,11 +22,13 @@ export default function AnalysisPage() {
   const [assetData, setAssetData] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
+  // Mock data
   useEffect(() => {
     async function fetchAssetData() {
       setLoading(true)
       try {
         // In a real app, you would get the wallet address from the wallet adapter
+        // For now, we'll use a dummy address
         const walletAddress = "5Uj9vWwTGYTGYvs8XgXUhsgmKNtCk8hbVnrQ9ExKJJQa"
         const analysisData = await getAssetAnalysis(walletAddress)
 
@@ -60,9 +62,9 @@ export default function AnalysisPage() {
             price: asset.price,
             change24h: asset.change_24h,
             change7d: asset.change_7d,
-            holdings: asset.holdings || 0,
-            value: asset.value || 0,
-            allocation: asset.allocation || 0,
+            holdings: 0, // This data isn't provided by the API
+            value: 0, // This data isn't provided by the API
+            allocation: 0, // This data isn't provided by the API
             returns: `${asset.change_30d}% (30d)`,
           }
         })
@@ -70,7 +72,7 @@ export default function AnalysisPage() {
         setAssetData(transformedData)
       } catch (error) {
         console.error("Failed to fetch asset data:", error)
-        // The API client will handle fallbacks
+        // Keep the mock data as fallback
       } finally {
         setLoading(false)
       }
@@ -80,7 +82,7 @@ export default function AnalysisPage() {
   }, [])
 
   // Calculate totals
-  const totalValue = assetData.reduce((sum, asset) => sum + asset.value, 0) || 960000
+  const totalValue = assetData.reduce((sum, asset) => sum + asset.value, 0)
   const totalReturn = 24.8
   const averageAPY = 11.2
 
@@ -133,7 +135,7 @@ export default function AnalysisPage() {
               <CardContent className="p-4">
                 <div className="text-solport-textSecondary text-sm">{t("analysis.totalReturn")}</div>
                 <div className="text-2xl font-bold mt-1">+{totalReturn}%</div>
-                <div className="text-solport-success text-sm mt-1">+2.1% (7d)</div>
+                <div className="text-solport-success text-sm mt-1">+2.1% (7일)</div>
               </CardContent>
             </Card>
 
@@ -141,7 +143,7 @@ export default function AnalysisPage() {
               <CardContent className="p-4">
                 <div className="text-solport-textSecondary text-sm">{t("analysis.averageAPY")}</div>
                 <div className="text-2xl font-bold mt-1">{averageAPY}%</div>
-                <div className="text-solport-success text-sm mt-1">+1.5% vs model</div>
+                <div className="text-solport-success text-sm mt-1">모델 대비 +1.5%</div>
               </CardContent>
             </Card>
           </div>
@@ -293,13 +295,13 @@ export default function AnalysisPage() {
                         <path d="M8 12h8" />
                       </svg>
                     </div>
-                    <div className="font-medium">AI Insights</div>
+                    <div className="font-medium">AI 인사이트</div>
                   </div>
 
                   <div className="space-y-2 text-sm">
                     <div>{t("analysis.aiInsight").replace("{percent}", "8.2")}</div>
-                    <div>Consider adding 5% more JitoSOL</div>
-                    <div>SOL price expected to rise in next 7 days (82% probability)</div>
+                    <div>JitoSOL 비중 5% 추가 고려</div>
+                    <div>다음 7일 간 SOL 가격 상승 전망 (82% 확률)</div>
                   </div>
                 </div>
               </div>

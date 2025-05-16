@@ -1,40 +1,102 @@
-"use client"
+'use client';
 
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Check } from "lucide-react"
-import { useLanguage } from "@/context/language-context"
-import { useAppState } from "@/context/app-state-context"
+import { Button } from '@/components/ui/button';
+import { Check, ArrowRight, ExternalLink } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useLanguage } from '@/context/language-context';
+import { useAppState } from '@/context/app-state-context';
 
-export function SetupComplete() {
-  const router = useRouter()
-  const { t } = useLanguage()
-  const { setConsultationCompleted } = useAppState()
+interface SetupCompleteProps {
+  portfolioId: string;
+  walletAddress: string;
+}
+
+export function SetupComplete({
+  portfolioId,
+  walletAddress,
+}: SetupCompleteProps) {
+  const router = useRouter();
+  const { t } = useLanguage();
+  const { setConsultationCompleted } = useAppState();
+
+  // Generate Solscan URL for the wallet address
+  const solscanUrl = `https://solscan.io/account/${walletAddress}`;
 
   const handleGoToDashboard = () => {
     // Ensure consultation is marked as completed
-    setConsultationCompleted(true)
+    setConsultationCompleted(true);
 
     // Use setTimeout to ensure state is updated before navigation
     setTimeout(() => {
-      router.push("/overview")
-    }, 100)
-  }
+      router.push('/overview');
+    }, 100);
+  };
 
   return (
     <div className="bg-[#161a2c] rounded-lg p-6 mb-6 text-center">
       <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
         <Check className="h-8 w-8 text-white" />
       </div>
-      <h2 className="text-xl font-bold mb-2">{t("setup.completeTitle")}</h2>
-      <p className="text-solport-textSecondary mb-6">{t("setup.completeDesc")}</p>
+      <h2 className="text-xl font-bold mb-2">{t('setup.completeTitle')}</h2>
+      <p className="text-solport-textSecondary mb-6">
+        {t('setup.completeDesc')}
+      </p>
+
+      <div className="bg-[#1a1e30] rounded-lg p-4 mb-6 inline-block">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            <div className="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
+            <div className="text-left">
+              <div className="font-medium">트랜잭션 성공: #{portfolioId}</div>
+              <div className="text-sm text-solport-textSecondary">
+                View on Solscan
+              </div>
+            </div>
+          </div>
+          <a
+            href={solscanUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="ml-4 text-solport-accent hover:text-solport-accent2 flex items-center"
+          >
+            <span className="mr-1">View on Solscan</span>
+            <ExternalLink className="h-4 w-4" />
+          </a>
+        </div>
+      </div>
+
+      <div className="space-y-4 mb-6 text-left">
+        <h3 className="font-medium">솔포트 대시보드의 주요 기능들</h3>
+        <div className="flex items-start">
+          <span className="w-2 h-2 rounded-full bg-solport-purple-400 mt-1.5 mr-2"></span>
+          <span>현재 자산 배분 및 총 가치 / 실시간 변동률</span>
+        </div>
+        <div className="flex items-start">
+          <span className="w-2 h-2 rounded-full bg-solport-purple-400 mt-1.5 mr-2"></span>
+          <span>목표 달성 진행 상황 / 실시간 업데이트</span>
+        </div>
+        <div className="flex items-start">
+          <span className="w-2 h-2 rounded-full bg-solport-purple-400 mt-1.5 mr-2"></span>
+          <span>월별 자동 투자 / 자산 재조정 설정</span>
+        </div>
+        <div className="flex items-start">
+          <span className="w-2 h-2 rounded-full bg-solport-purple-400 mt-1.5 mr-2"></span>
+          <span>수익 그래프 / 자산별 성과 비교</span>
+        </div>
+      </div>
 
       <Button
         className="bg-solport-accent hover:bg-solport-accent2 text-white px-6 py-2 rounded-md"
         onClick={handleGoToDashboard}
       >
-        {t("setup.goToDashboard")}
+        {t('setup.goToDashboard')}
+        <ArrowRight className="ml-2 h-4 w-4" />
       </Button>
+
+      {/* New motivational call to action */}
+      <p className="mt-4 text-sm text-solport-accent font-medium">
+        이제 SolPort와 함께 더 스마트한 투자 여정을 시작해보세요!
+      </p>
     </div>
-  )
+  );
 }

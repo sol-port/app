@@ -4,35 +4,36 @@ import { useState, useEffect } from "react"
 import DashboardLayout from "../dashboard-layout"
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useLanguage } from "@/context/language-context"
-import { getAutomationSettings } from "@/lib/api/client"
-import { useAppState } from "@/context/app-state-context"
+import { getAutomationSettings, updateAutomationSettings } from "@/lib/api/client"
 
 export default function AutomationPage() {
   const { t } = useLanguage()
   const [autoRebalancing, setAutoRebalancing] = useState(true)
   const [autoContribution, setAutoContribution] = useState(true)
   const [goalStrategy, setGoalStrategy] = useState(true)
+
   const [loading, setLoading] = useState(true)
   const [automationData, setAutomationData] = useState<any>(null)
-  const { walletAddress } = useAppState()
 
   useEffect(() => {
     async function fetchAutomationSettings() {
       setLoading(true)
       try {
-        // Use the wallet address from context if available, otherwise use a default
-        const address = walletAddress || "5Uj9vWwTGYTGYvs8XgXUhsgmKNtCk8hbVnrQ9ExKJJQa"
-        const data = await getAutomationSettings(address)
+        // In a real app, you would get the wallet address from the wallet adapter
+        // For now, we'll use a dummy address
+        const walletAddress = "5Uj9vWwTGYTGYvs8XgXUhsgmKNtCk8hbVnrQ9ExKJJQa"
+        const data = await getAutomationSettings(walletAddress)
         setAutomationData(data)
 
         // Update state based on fetched data
         if (data.automation && Array.isArray(data.automation)) {
-          const rebalancing = data.automation.find((item: any) => item.title === "Auto Rebalancing")
-          const contribution = data.automation.find((item: any) => item.title === "Auto Contribution")
-          const goalStrategy = data.automation.find((item: any) => item.title === "Goal-based Strategy Adjustment")
+          const rebalancing = data.automation.find((item: any) => item.title === "자동 리밸런싱")
+          const contribution = data.automation.find((item: any) => item.title === "자동 납입 설정")
+          const goalStrategy = data.automation.find((item: any) => item.title === "목표 기반 전략 조정")
 
           if (rebalancing) setAutoRebalancing(rebalancing.enabled)
           if (contribution) setAutoContribution(contribution.enabled)
@@ -40,22 +41,17 @@ export default function AutomationPage() {
         }
       } catch (error) {
         console.error("Failed to fetch automation settings:", error)
-        // The API client will handle fallbacks
       } finally {
         setLoading(false)
       }
     }
 
     fetchAutomationSettings()
-  }, [walletAddress])
+  }, [])
 
-  // Get next contribution date from automation data
-  const nextContribution = automationData?.next_contribution_date
-    ? new Date(automationData.next_contribution_date).toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-      })
-    : "Jun 5"
+  // Mock data
+  const activeAutomations = 3
+  const nextContribution = "6월 5일"
 
   return (
     <DashboardLayout title={t("automationSettings.title")}>
@@ -65,25 +61,25 @@ export default function AutomationPage() {
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4 text-sm">
             <div>
               <div className="text-solport-textSecondary">
-                {t("automationSettings.activeAutomations").replace("{count}", "3")}
+                {t("automationSettings.activeAutomations").replace("{count}", activeAutomations.toString())}
               </div>
             </div>
             <div>
               <div className="text-solport-textSecondary">
-                {t("automationSettings.rebalancingStatus").replace("{status}", autoRebalancing ? "Active" : "Inactive")}
+                {t("automationSettings.rebalancingStatus").replace("{status}", autoRebalancing ? "활성화" : "비활성화")}
               </div>
             </div>
             <div>
               <div className="text-solport-textSecondary">
                 {t("automationSettings.contributionStatus").replace(
                   "{status}",
-                  autoContribution ? "Active" : "Inactive",
+                  autoContribution ? "활성화" : "비활성화",
                 )}
               </div>
             </div>
             <div>
               <div className="text-solport-textSecondary">
-                {t("automationSettings.goalStrategyStatus").replace("{status}", goalStrategy ? "Active" : "Inactive")}
+                {t("automationSettings.goalStrategyStatus").replace("{status}", goalStrategy ? "활성화" : "비활성화")}
               </div>
             </div>
             <div>
@@ -134,7 +130,7 @@ export default function AutomationPage() {
                     <SelectContent className="bg-[#1a1e30] border-[#334155]">
                       <SelectItem value="monthly">{t("automationSettings.monthly")}</SelectItem>
                       <SelectItem value="quarterly">{t("automationSettings.quarterly")}</SelectItem>
-                      <SelectItem value="yearly">Yearly</SelectItem>
+                      <SelectItem value="yearly">연별</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -149,8 +145,8 @@ export default function AutomationPage() {
                     </SelectTrigger>
                     <SelectContent className="bg-[#1a1e30] border-[#334155]">
                       <SelectItem value="5percent">{t("automationSettings.threshold5")}</SelectItem>
-                      <SelectItem value="10percent">10% or more</SelectItem>
-                      <SelectItem value="15percent">15% or more</SelectItem>
+                      <SelectItem value="10percent">10% 이상</SelectItem>
+                      <SelectItem value="15percent">15% 이상</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -193,13 +189,13 @@ export default function AutomationPage() {
                   </div>
                   <Select defaultValue="day5">
                     <SelectTrigger className="bg-[#273344] border-0 focus:ring-0 focus:ring-offset-0">
-                      <SelectValue placeholder="Monthly on the 5th" />
+                      <SelectValue placeholder="매월 5일" />
                     </SelectTrigger>
                     <SelectContent className="bg-[#1a1e30] border-[#334155]">
-                      <SelectItem value="day1">Monthly on the 1st</SelectItem>
-                      <SelectItem value="day5">Monthly on the 5th</SelectItem>
-                      <SelectItem value="day15">Monthly on the 15th</SelectItem>
-                      <SelectItem value="day25">Monthly on the 25th</SelectItem>
+                      <SelectItem value="day1">매월 1일</SelectItem>
+                      <SelectItem value="day5">매월 5일</SelectItem>
+                      <SelectItem value="day15">매월 15일</SelectItem>
+                      <SelectItem value="day25">매월 25일</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -219,67 +215,179 @@ export default function AutomationPage() {
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
                   <div className="text-sm text-solport-textSecondary mb-2">
-                    {t("automationSettings.strategyFrequency")}
+                    {t("automationSettings.fundedRatioThreshold")}
+                  </div>
+                  <Select defaultValue="80percent">
+                    <SelectTrigger className="bg-[#273344] border-0 focus:ring-0 focus:ring-offset-0">
+                      <SelectValue placeholder={t("automationSettings.threshold80")} />
+                    </SelectTrigger>
+                    <SelectContent className="bg-[#1a1e30] border-[#334155]">
+                      <SelectItem value="70percent">70% 미만</SelectItem>
+                      <SelectItem value="80percent">80% 미만</SelectItem>
+                      <SelectItem value="90percent">90% 미만</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <div className="text-sm text-solport-textSecondary mb-2">
+                    {t("automationSettings.adjustmentFrequency")}
                   </div>
                   <Select defaultValue="quarterly">
                     <SelectTrigger className="bg-[#273344] border-0 focus:ring-0 focus:ring-offset-0">
                       <SelectValue placeholder={t("automationSettings.quarterly")} />
                     </SelectTrigger>
                     <SelectContent className="bg-[#1a1e30] border-[#334155]">
-                      <SelectItem value="monthly">{t("automationSettings.monthly")}</SelectItem>
-                      <SelectItem value="quarterly">{t("automationSettings.quarterly")}</SelectItem>
-                      <SelectItem value="yearly">Yearly</SelectItem>
+                      <SelectItem value="monthly">월별</SelectItem>
+                      <SelectItem value="quarterly">분기별</SelectItem>
+                      <SelectItem value="yearly">연별</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div>
                   <div className="text-sm text-solport-textSecondary mb-2">
-                    {t("automationSettings.adjustmentThreshold")}
+                    {t("automationSettings.adjustmentType")}
                   </div>
-                  <Select defaultValue="10percent">
+                  <Select defaultValue="auto">
                     <SelectTrigger className="bg-[#273344] border-0 focus:ring-0 focus:ring-offset-0">
-                      <SelectValue placeholder="10% or more" />
+                      <SelectValue placeholder={t("automationSettings.autoSuggestion")} />
                     </SelectTrigger>
                     <SelectContent className="bg-[#1a1e30] border-[#334155]">
-                      <SelectItem value="5percent">{t("automationSettings.threshold5")}</SelectItem>
-                      <SelectItem value="10percent">10% or more</SelectItem>
-                      <SelectItem value="15percent">15% or more</SelectItem>
+                      <SelectItem value="auto">자동 제안 (수동 승인)</SelectItem>
+                      <SelectItem value="manual">수동 승인</SelectItem>
+                      <SelectItem value="full">완전 자동화</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
 
-        <TabsContent value="advanced" className="mt-6 space-y-6">
-          {/* Advanced Settings */}
-          <Card className="bg-solport-card border-0">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-medium">{t("automationSettings.advancedSettings")}</h3>
-                {/* Placeholder for advanced settings */}
-              </div>
+              <p className="text-xs text-solport-textSecondary mt-4">{t("automationSettings.note")}</p>
             </CardContent>
           </Card>
-        </TabsContent>
 
-        <TabsContent value="logs" className="mt-6 space-y-6">
-          {/* Logs */}
-          <Card className="bg-solport-card border-0">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-medium">{t("automationSettings.logs")}</h3>
-                {/* Placeholder for logs */}
-              </div>
-            </CardContent>
-          </Card>
+          <div className="flex justify-end">
+            <Button
+              className="bg-solport-accent hover:bg-solport-accent2"
+              onClick={async () => {
+                try {
+                  // In a real app, you would get the wallet address from the wallet adapter
+                  const walletAddress = "5Uj9vWwTGYTGYvs8XgXUhsgmKNtCk8hbVnrQ9ExKJJQa"
+
+                  // Update rebalancing settings
+                  await updateAutomationSettings(walletAddress, "rebalancing", {
+                    enabled: autoRebalancing,
+                    // Add other settings as needed
+                  })
+
+                  // Update auto contribution settings
+                  await updateAutomationSettings(walletAddress, "auto_payment", {
+                    enabled: autoContribution,
+                    // Add other settings as needed
+                  })
+
+                  // Update goal strategy settings
+                  await updateAutomationSettings(walletAddress, "goal_based", {
+                    enabled: goalStrategy,
+                    // Add other settings as needed
+                  })
+
+                  // Show success message or notification
+                  alert(t("automationSettings.saveSettings") + " - Success!")
+                } catch (error) {
+                  console.error("Failed to save settings:", error)
+                  // Show error message
+                  alert("Failed to save settings. Please try again.")
+                }
+              }}
+            >
+              {t("automationSettings.saveSettings")}
+            </Button>
+          </div>
         </TabsContent>
       </Tabs>
+
+      {/* AI Automation Recommendations */}
+      <Card className="bg-solport-card border-0">
+        <CardContent className="p-6">
+          <h3 className="text-lg font-medium mb-4">{t("automationSettings.aiRecommendations")}</h3>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-[#1a1e30] p-4 rounded-lg flex items-start justify-between">
+              <div className="flex items-start">
+                <div className="w-10 h-10 rounded-full bg-solport-purple-400 flex items-center justify-center mr-3 text-white shrink-0">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <rect width="18" height="18" x="3" y="3" rx="2" />
+                    <path d="M7 7h.01" />
+                    <path d="M17 7h.01" />
+                    <path d="M7 17h.01" />
+                    <path d="M17 17h.01" />
+                  </svg>
+                </div>
+                <div>
+                  <h4 className="font-medium">{t("automationSettings.jitosolCompounding")}</h4>
+                  <p className="text-sm text-solport-textSecondary mt-1">
+                    {t("automationSettings.jitosolDescription")}
+                  </p>
+                </div>
+              </div>
+              <Button
+                variant="outline"
+                className="bg-transparent border-solport-accent text-solport-accent hover:bg-solport-accent hover:text-white ml-2 shrink-0"
+              >
+                {t("automationSettings.apply")}
+              </Button>
+            </div>
+
+            <div className="bg-[#1a1e30] p-4 rounded-lg flex items-start justify-between">
+              <div className="flex items-start">
+                <div className="w-10 h-10 rounded-full bg-solport-purple-400 flex items-center justify-center mr-3 text-white shrink-0">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <rect width="18" height="18" x="3" y="3" rx="2" />
+                    <path d="M7 7h.01" />
+                    <path d="M17 7h.01" />
+                    <path d="M7 17h.01" />
+                    <path d="M17 17h.01" />
+                  </svg>
+                </div>
+                <div>
+                  <h4 className="font-medium">{t("automationSettings.dcaStrategy")}</h4>
+                  <p className="text-sm text-solport-textSecondary mt-1">{t("automationSettings.dcaDescription")}</p>
+                </div>
+              </div>
+              <Button
+                variant="outline"
+                className="bg-transparent border-solport-accent text-solport-accent hover:bg-solport-accent hover:text-white ml-2 shrink-0"
+              >
+                {t("automationSettings.apply")}
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </DashboardLayout>
   )
 }

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import DashboardLayout from "../dashboard-layout"
 import { getPortfolioData } from "@/lib/api/client"
-import type { PortfolioData } from "@/lib/api/portfolio"
+import type { PortfolioData } from "@/lib/api/portfolio" // Keep the type import
 import { AssetSummaryCard } from "@/components/dashboard/asset-summary-card"
 import { ReturnCard } from "@/components/dashboard/return-card"
 import { RiskScoreCard } from "@/components/dashboard/risk-score-card"
@@ -34,6 +34,12 @@ export default function OverviewPage() {
     try {
       // Use the wallet address from context if available, otherwise use a default
       const address = walletAddress || "5Uj9vWwTGYTGYvs8XgXUhsgmKNtCk8hbVnrQ9ExKJJQa"
+
+      // Validate the address format before making the API call
+      if (!/^[A-Za-z0-9]{32,44}$/.test(address)) {
+        throw new Error("Invalid wallet address format")
+      }
+
       const data = await getPortfolioData(address)
       setPortfolioData(data)
     } catch (error) {
@@ -53,7 +59,7 @@ export default function OverviewPage() {
   }
 
   return (
-    <DashboardLayout title="My Portfolio">
+    <DashboardLayout title="내 포트폴리오">
       {error ? (
         <Alert variant="destructive" className="mb-4">
           <AlertCircle className="h-4 w-4" />

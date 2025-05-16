@@ -3,9 +3,13 @@
 import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Send, Bot, User, RefreshCw, Lightbulb } from "lucide-react"
-import { startChatbotSession, sendChatbotMessage, resetChatbotSession } from "@/lib/api/chatbot"
 import { useLanguage } from "@/context/language-context"
+import { Send, Bot, User, RefreshCw, Lightbulb } from "lucide-react"
+import { startChatbotSession, sendChatbotMessage } from "@/lib/api/chatbot"
+import { API_CONFIG } from "@/lib/config"
+
+// Base API URL from config
+const API_BASE_URL = API_CONFIG.baseUrl
 
 interface Message {
   id: string
@@ -29,7 +33,7 @@ export function ChatInterface({ walletAddress, onConsultationComplete }: ChatInt
   const [hasPortfolio, setHasPortfolio] = useState<boolean>(false)
   const { t } = useLanguage()
 
-  // Default response hints in English
+  // AI response hints based on conversation context
   const [responseHints, setResponseHints] = useState<string[]>([
     "What is your target amount?",
     "How long do you plan to invest?",
@@ -56,12 +60,12 @@ export function ChatInterface({ walletAddress, onConsultationComplete }: ChatInt
       if (!walletAddress) return
 
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/checkportfolio/${walletAddress}`)
+        const response = await fetch(`${API_BASE_URL}/checkportfolio/${walletAddress}`)
         if (response.ok) {
           const data = await response.json()
           setHasPortfolio(data.has_portfolio)
 
-          // Update hints based on portfolio status (in English)
+          // Update hints based on portfolio status
           if (data.has_portfolio) {
             setResponseHints([
               "How would you like to adjust your current portfolio?",
@@ -108,7 +112,7 @@ export function ChatInterface({ walletAddress, onConsultationComplete }: ChatInt
               .filter(Boolean)
           }
         } else if (Array.isArray(latestMessage.example)) {
-          exampleData = latestMessage.example.map(String)
+          exampleData = (latestMessage.example as unknown[]).map(String)
         }
 
         if (exampleData.length > 0) {
@@ -279,14 +283,7 @@ export function ChatInterface({ walletAddress, onConsultationComplete }: ChatInt
         "I'm thinking of a 20-year long-term investment",
         "I want a 5-year short-term investment",
       ])
-    } else if (
-      userMsgLower.includes("monthly") ||
-      aiMsgLower.includes("monthly") ||
-      userMsgLower.includes("contribution") ||
-      aiMsgLower.includes("contribution") ||
-      userMsgLower.includes("invest") ||
-      aiMsgLower.includes("invest")
-    ) {
+    } else if (userMessage.toLowerCase().includes("invest") || aiResponse.toLowerCase().includes("invest")) {
       setResponseHints([
         "I can invest 100 SOL monthly",
         "I plan to contribute 50 SOL per month",
@@ -308,6 +305,7 @@ export function ChatInterface({ walletAddress, onConsultationComplete }: ChatInt
     }
   }
 
+  /*
   const handleResetChatbotSession = async () => {
     setMessages([])
     setIsTyping(true)
@@ -370,6 +368,7 @@ export function ChatInterface({ walletAddress, onConsultationComplete }: ChatInt
       setSessionStarted(true)
     }
   }
+  */
 
   // For demo purposes, let's add a function to simulate consultation completion
   const simulateConsultationComplete = () => {
@@ -405,19 +404,13 @@ export function ChatInterface({ walletAddress, onConsultationComplete }: ChatInt
 
   // Render response hints
   const renderResponseHints = () => {
-    if (!sessionStarted || isTyping) return null
-
-    // Get the latest message
-    const latestMessage = messages[messages.length - 1]
-
-    // Only show hints if the latest message is from the assistant
-    if (!latestMessage || latestMessage.role !== "assistant") return null
+    if (!sessionStarted || messages.length > 2 || isTyping) return null
 
     return (
       <div className="mt-4 p-3 bg-[#1a1e30] rounded-lg">
         <div className="flex items-center text-solport-textSecondary mb-2">
           <Lightbulb className="h-4 w-4 mr-1" />
-          <span className="text-sm">Suggested responses:</span>
+          <span className="text-sm">{t("chat.suggestedResponses") || "Suggested Responses:"}</span>
         </div>
         <div className="space-y-2">
           {responseHints.map((hint, index) => (
@@ -442,7 +435,7 @@ export function ChatInterface({ walletAddress, onConsultationComplete }: ChatInt
       <h2 className="text-xl font-bold mb-4">{t("chat.title")}</h2>
 
       {/* Session Error Banner */}
-      {sessionError && (
+      {/* {sessionError && (
         <div className="bg-red-900/30 border border-red-500 text-red-100 px-4 py-2 rounded-md mb-4 flex items-center justify-between">
           <span>{sessionError}</span>
           <Button
@@ -454,7 +447,7 @@ export function ChatInterface({ walletAddress, onConsultationComplete }: ChatInt
             <RefreshCw className="h-4 w-4 mr-1" /> Retry
           </Button>
         </div>
-      )}
+      )} */}
 
       {/* Chat Messages */}
       <div className="flex-1 overflow-y-auto mb-4 space-y-4">
@@ -522,7 +515,7 @@ export function ChatInterface({ walletAddress, onConsultationComplete }: ChatInt
           </Button>
         </div>
         <div className="mt-2 text-xs text-solport-textSecondary text-center">{t("chat.disclaimer")}</div>
-        <div className="mt-2 text-center">
+        {/* <div className="mt-2 text-center">
           <Button
             onClick={handleResetChatbotSession}
             variant="outline"
@@ -531,7 +524,7 @@ export function ChatInterface({ walletAddress, onConsultationComplete }: ChatInt
           >
             {t("chat.resetConversation") || "Reset Conversation"}
           </Button>
-        </div>
+        </div> */}
 
         {/* For demo purposes only - this would be removed in production */}
         <div className="mt-4 text-center">

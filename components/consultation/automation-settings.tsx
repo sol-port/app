@@ -42,7 +42,7 @@ export function AutomationSettings({ walletAddress, portfolioResult, onComplete 
   const getAutoPaymentDate = () => {
     if (automationData?.settings && automationData.settings.length > 0) {
       for (const setting of automationData.settings) {
-        if (setting.title === "자동 납입 설정" && setting.options?.date?.day) {
+        if (setting.title === t("automationSettings.autoContribution") && setting.options?.date?.day) {
           return setting.options.date.day
         }
       }
@@ -54,7 +54,7 @@ export function AutomationSettings({ walletAddress, portfolioResult, onComplete 
   const getAutoPaymentAmount = () => {
     if (automationData?.settings && automationData.settings.length > 0) {
       for (const setting of automationData.settings) {
-        if (setting.title === "자동 납입 설정" && setting.options?.amount?.value) {
+        if (setting.title === t("automationSettings.autoContribution") && setting.options?.amount?.value) {
           return setting.options.amount.value
         }
       }

@@ -112,7 +112,7 @@ export function PortfolioConfirmation({ result, onConfirm, onRetry, walletAddres
                   ))}
                 </Pie>
                 <Tooltip
-                  formatter={(value, name) => [`${value.toFixed(1)}%`, name]}
+                  formatter={(value, name) => [`${value}%`, name]}
                   contentStyle={{
                     backgroundColor: "#1E293B",
                     borderColor: "#334155",
