@@ -11,10 +11,15 @@ interface PerformanceChartCardProps {
 }
 
 export function PerformanceChartCard({ performanceData }: PerformanceChartCardProps) {
+  // Ensure September and November are included in the data
+  const months = ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"]
+
   return (
     <Card className="bg-solport-card border-0">
       <CardHeader>
-        <CardTitle className="text-lg font-medium">포트폴리오 성과</CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-lg font-medium">포트폴리오 성과</CardTitle>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="h-64">
@@ -28,8 +33,8 @@ export function PerformanceChartCard({ performanceData }: PerformanceChartCardPr
                 bottom: 5,
               }}
             >
-              <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-              <XAxis dataKey="month" stroke="#A0AEC0" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={true} />
+              <XAxis dataKey="month" stroke="#A0AEC0" tickFormatter={(value) => value} ticks={months} />
               <YAxis stroke="#A0AEC0" />
               <Tooltip
                 contentStyle={{

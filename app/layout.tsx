@@ -4,6 +4,8 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { WalletProvider } from "@/components/wallet-provider"
+import { AppStateProvider } from "@/context/app-state-context"
+import { LanguageProvider } from "@/context/language-context"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -22,7 +24,11 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
-          <WalletProvider>{children}</WalletProvider>
+          <WalletProvider>
+            <AppStateProvider>
+              <LanguageProvider>{children}</LanguageProvider>
+            </AppStateProvider>
+          </WalletProvider>
         </ThemeProvider>
       </body>
     </html>
