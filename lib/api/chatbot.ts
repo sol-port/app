@@ -131,3 +131,23 @@ export async function resetChatbotSession(walletAddress: string) {
     }
   }
 }
+
+export async function checkPortfolio(walletAddress: string): Promise<ChatbotResponse> {
+  try {
+    const response = await fetch(`${API_URL}/checkportfolio/${walletAddress}`, {
+      method: "GET",
+    })
+
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`)
+    }
+
+    return await response.json()
+  } catch (error) {
+    console.error("Error starting chatbot session:", error)
+    return {
+      status: "error",
+      message: error instanceof Error ? error.message : "Unknown error occurred",
+    }
+  }
+}

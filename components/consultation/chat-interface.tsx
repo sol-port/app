@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Send, Bot, User, RefreshCw } from "lucide-react"
 import { startChatbotSession, sendChatbotMessage, resetChatbotSession } from "@/lib/api/chatbot"
 import { useLanguage } from "@/context/language-context"
+import { useRouter } from 'next/navigation'
 
 interface Message {
   id: string
@@ -26,6 +27,7 @@ export function ChatInterface({ walletAddress, onConsultationComplete }: ChatInt
   const [sessionStarted, setSessionStarted] = useState(false)
   const [sessionError, setSessionError] = useState<string | null>(null)
   const { t } = useLanguage()
+  const router = useRouter()
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
