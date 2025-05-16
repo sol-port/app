@@ -34,7 +34,7 @@ export default function OverviewPage() {
   }, [])
 
   return (
-    <DashboardLayout>
+    <DashboardLayout title="내 포트폴리오">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
         {loading ? (
           <>

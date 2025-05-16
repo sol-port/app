@@ -1,33 +1,37 @@
 "use client"
 
-import { useState } from "react"
+import { useState, Suspense } from "react"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { ChevronDown, Settings, Languages } from "lucide-react"
 import { LanguagePopup } from "@/components/language-popup"
 import { SettingsPopup } from "@/components/settings-popup"
+import { useLanguage } from "@/context/language-context"
 
-export function Header() {
+function HeaderContent() {
   const [network, setNetwork] = useState("Solana")
-  const [languageCode, setLanguageCode] = useState("ko")
   const [languagePopupOpen, setLanguagePopupOpen] = useState(false)
   const [settingsPopupOpen, setSettingsPopupOpen] = useState(false)
+  const { language, setLanguage, t } = useLanguage()
 
   // Mock wallet address - in a real app, this would come from your wallet connection
   const walletAddress = "5Uj9vWwTGYTGYvs8XgXUhsgmKNtCk8hbVnrQ9ExKJJQa"
 
-  const getLanguageName = (code: string) => {
-    switch (code) {
-      case "ko":
-        return "한국어"
-      case "en":
-        return "English"
-      case "ja":
-        return "日本語"
-      default:
-        return "한국어"
+  const handleLanguageSelect = (code: string) => {
+    if (code === "ko") {
+      setLanguage("ko_KR")
+    } else if (code === "en") {
+      setLanguage("en_US")
     }
+    // Add more language mappings as needed
+  }
+
+  // Map language code to display format
+  const getLanguageCode = () => {
+    if (language === "ko_KR") return "ko"
+    if (language === "en_US") return "en"
+    return "en" // Default
   }
 
   return (
@@ -73,8 +77,8 @@ export function Header() {
         <LanguagePopup
           isOpen={languagePopupOpen}
           onClose={() => setLanguagePopupOpen(false)}
-          onSelectLanguage={setLanguageCode}
-          currentLanguage={languageCode}
+          onSelectLanguage={handleLanguageSelect}
+          currentLanguage={getLanguageCode()}
         />
 
         {/* Settings Button */}
@@ -94,5 +98,13 @@ export function Header() {
         />
       </div>
     </header>
+  )
+}
+
+export function Header() {
+  return (
+    <Suspense fallback={<div className="h-16 bg-solport-card animate-pulse"></div>}>
+      <HeaderContent />
+    </Suspense>
   )
 }

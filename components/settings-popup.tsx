@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation"
 import { Popup } from "@/components/ui/popup"
 import { Button } from "@/components/ui/button"
 import { LogOut, Copy } from "lucide-react"
+import { useLanguage } from "@/context/language-context"
 
 interface SettingsPopupProps {
   isOpen: boolean
@@ -13,6 +14,7 @@ interface SettingsPopupProps {
 
 export function SettingsPopup({ isOpen, onClose, walletAddress = "" }: SettingsPopupProps) {
   const router = useRouter()
+  const { t } = useLanguage()
 
   const shortenAddress = (address: string) => {
     if (!address) return ""
@@ -39,7 +41,7 @@ export function SettingsPopup({ isOpen, onClose, walletAddress = "" }: SettingsP
     <Popup isOpen={isOpen} onClose={onClose}>
       <div className="space-y-4">
         <div>
-          <div className="text-sm font-medium text-solport-textSecondary mb-1">Wallet Address</div>
+          <div className="text-sm font-medium text-solport-textSecondary mb-1">{t("header.walletAddress")}</div>
           <div className="flex items-center justify-between px-3 py-2 bg-[#273344] rounded-md">
             <span className="text-sm">{shortenAddress(walletAddress)}</span>
             <button onClick={copyToClipboard} className="text-solport-textSecondary hover:text-white transition-colors">
@@ -54,7 +56,7 @@ export function SettingsPopup({ isOpen, onClose, walletAddress = "" }: SettingsP
           onClick={handleDisconnect}
         >
           <LogOut className="h-4 w-4" />
-          Disconnect
+          {t("header.disconnect")}
         </Button>
       </div>
     </Popup>

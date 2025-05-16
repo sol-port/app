@@ -1,5 +1,6 @@
 "use client"
 import { Popup } from "@/components/ui/popup"
+import { useLanguage } from "@/context/language-context"
 
 interface LanguageOption {
   code: string
@@ -20,10 +21,12 @@ const languages: LanguageOption[] = [
 ]
 
 export function LanguagePopup({ isOpen, onClose, onSelectLanguage, currentLanguage }: LanguagePopupProps) {
+  const { t } = useLanguage()
+
   return (
     <Popup isOpen={isOpen} onClose={onClose} className="w-48">
       <div className="space-y-1">
-        <div className="text-sm font-medium mb-2 text-solport-textSecondary">Select Language</div>
+        <div className="text-sm font-medium mb-2 text-solport-textSecondary">{t("header.selectLanguage")}</div>
         {languages.map((language) => (
           <button
             key={language.code}
