@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
 import { useWallet } from "@solana/wallet-adapter-react"
-import { useRouter, usePathname } from "next/navigation"
+import { setCookie, getCookie, removeCookie } from "@/lib/cookies"
 
 interface AppState {
   isWalletConnected: boolean
@@ -17,65 +17,55 @@ const AppStateContext = createContext<AppState | undefined>(undefined)
 
 export function AppStateProvider({ children }: { children: ReactNode }) {
   const { connected, publicKey } = useWallet()
-  const [isConsultationCompleted, setIsConsultationCompleted] = useState(false)
-  const [consultationResult, setConsultationResult] = useState<any | null>(null)
-  const router = useRouter()
-  const pathname = usePathname()
+  const [isConsultationCompleted, setIsConsultationCompletedState] = useState(false)
+  const [consultationResult, setConsultationResultState] = useState<any | null>(null)
 
-  // Check local storage for consultation status on initial load
+  // Check cookies for consultation status on initial load
   useEffect(() => {
-    const storedStatus = localStorage.getItem("solport-consultation-completed")
-    const storedResult = localStorage.getItem("solport-consultation-result")
+    const storedStatus = getCookie("isConsultationCompleted")
+    const storedResult = getCookie("consultationResult")
 
     if (storedStatus === "true") {
-      setIsConsultationCompleted(true)
+      setIsConsultationCompletedState(true)
     }
 
     if (storedResult) {
       try {
-        setConsultationResult(JSON.parse(storedResult))
+        setConsultationResultState(JSON.parse(storedResult))
       } catch (e) {
         console.error("Failed to parse stored consultation result", e)
       }
     }
   }, [])
 
-  // Update local storage when consultation status changes
+  // Update cookies when consultation status changes
   useEffect(() => {
-    localStorage.setItem("solport-consultation-completed", isConsultationCompleted.toString())
+    if (isConsultationCompleted) {
+      setCookie("isConsultationCompleted", "true")
+    } else {
+      removeCookie("isConsultationCompleted")
+    }
 
     if (consultationResult) {
-      localStorage.setItem("solport-consultation-result", JSON.stringify(consultationResult))
+      setCookie("consultationResult", JSON.stringify(consultationResult))
+    } else {
+      removeCookie("consultationResult")
     }
   }, [isConsultationCompleted, consultationResult])
 
-  // Handle navigation restrictions
-  useEffect(() => {
-    // Restricted paths that require consultation completion
-    const restrictedPaths = ["/overview", "/goals", "/analysis", "/automation", "/calendar"]
-
-    // If trying to access restricted paths without completing consultation
-    if (restrictedPaths.some((path) => pathname?.startsWith(path)) && !isConsultationCompleted) {
-      router.push("/chat")
-      return
-    }
-
-    // If trying to access chat after consultation is completed
-    if (pathname === "/chat" && isConsultationCompleted) {
-      router.push("/overview")
-      return
-    }
-  }, [pathname, isConsultationCompleted, router])
-
   const setConsultationCompleted = (completed: boolean) => {
-    setIsConsultationCompleted(completed)
+    setIsConsultationCompletedState(completed)
+  }
+
+  const setConsultationResult = (result: any) => {
+    setConsultationResultState(result)
   }
 
   const resetConsultation = () => {
-    setIsConsultationCompleted(false)
-    setConsultationResult(null)
-    localStorage.removeItem("solport-consultation-completed")
-    localStorage.removeItem("solport-consultation-result")
+    setIsConsultationCompletedState(false)
+    setConsultationResultState(null)
+    removeCookie("isConsultationCompleted")
+    removeCookie("consultationResult")
   }
 
   return (

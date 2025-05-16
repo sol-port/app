@@ -45,6 +45,11 @@ function SidebarContent() {
       href: "/calendar",
       disabled: !isConsultationCompleted,
     },
+    {
+      name: t("sidebar.notifications"),
+      href: "/calendar",
+      disabled: !isConsultationCompleted,
+    },
   ]
 
   return (
@@ -57,7 +62,7 @@ function SidebarContent() {
       <nav className="flex-1 p-2 space-y-1">
         {sidebarItems.map((item) => (
           <Link
-            key={item.href}
+            key={item.href + item.name}
             href={item.disabled ? "#" : item.href}
             className={cn(
               "flex items-center px-3 py-3 rounded-md transition-colors",

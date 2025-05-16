@@ -208,3 +208,6 @@ export function AutomationSettings({ walletAddress, portfolioResult, onComplete 
     </div>
   )
 }
+
+// Add default export that re-exports the named export
+export default AutomationSettings

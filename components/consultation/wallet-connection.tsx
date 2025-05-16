@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useWallet } from "@solana/wallet-adapter-react"
 import { Button } from "@/components/ui/button"
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui"
@@ -20,6 +20,16 @@ export function WalletConnection({ onComplete }: WalletConnectionProps) {
   const formatWalletAddress = (address: string) => {
     return `${address.slice(0, 6)}...${address.slice(-4)}`
   }
+
+  // Reset consultation session when wallet connection component mounts
+  useEffect(() => {
+    // Clear consultation completion status if user is back at wallet connection stage
+    localStorage.removeItem("solport-consultation-completed")
+    localStorage.removeItem("solport-consultation-result")
+
+    // In a real app, you might want to disconnect the wallet here as well
+    // if it's already connected and the user is starting over
+  }, [])
 
   return (
     <div className="bg-[#161a2c] rounded-lg p-6 mb-6">
