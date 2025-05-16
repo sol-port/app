@@ -10,6 +10,8 @@ import { SetupComplete } from "@/components/consultation/setup-complete"
 import { useAppState } from "@/context/app-state-context"
 import { useRouter } from "next/navigation"
 import { useLanguage } from "@/context/language-context"
+import { useDepositInPortfolio } from "@/lib/solana/useDepositInPortfolio"
+import { LAMPORTS_PER_SOL } from "@solana/web3.js"
 
 // Define the consultation steps
 const STEPS = {
@@ -27,6 +29,7 @@ export default function HomeChat() {
   const { setConsultationCompleted, setConsultationResult: setGlobalResult } = useAppState()
   const router = useRouter()
   const { t } = useLanguage()
+  const { depositInPortfolio } = useDepositInPortfolio()
 
   // Move to chat step if wallet is already connected
   useEffect(() => {
@@ -52,7 +55,15 @@ export default function HomeChat() {
   }
 
   // Handle automation settings completion
-  const handleAutomationComplete = () => {
+  const handleAutomationComplete = async() => {
+    console.log(consultationResult)
+    const portfolioMap = consultationResult?.weights
+    const solAmount = consultationResult?.sol
+    const weightBpsDenominator = 10000
+    const portfolioWeights = Object.values(portfolioMap) as number[]
+    const portfolioWeightsNormalized = portfolioWeights.map((weight) => Math.round(weight * weightBpsDenominator))
+    const lamportAmount = BigInt(Math.round(solAmount * LAMPORTS_PER_SOL));
+    const txHash = await depositInPortfolio(lamportAmount, portfolioWeightsNormalized)
     setCurrentStep(STEPS.SETUP_COMPLETE)
   }
 
