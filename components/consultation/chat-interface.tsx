@@ -3,13 +3,14 @@
 import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Send, Bot, User } from "lucide-react"
-import { startChatbotSession, sendChatbotMessage } from "@/lib/api/chatbot"
+import { Send, Bot, User, RefreshCw, Lightbulb } from "lucide-react"
+import { startChatbotSession, sendChatbotMessage, resetChatbotSession } from "@/lib/api/chatbot"
 import { useLanguage } from "@/context/language-context"
 
 interface Message {
   id: string
   content: string
+  example?: string
   role: "user" | "assistant"
   timestamp: Date
 }
@@ -24,7 +25,17 @@ export function ChatInterface({ walletAddress, onConsultationComplete }: ChatInt
   const [input, setInput] = useState("")
   const [isTyping, setIsTyping] = useState(false)
   const [sessionStarted, setSessionStarted] = useState(false)
+  const [sessionError, setSessionError] = useState<string | null>(null)
+  const [hasPortfolio, setHasPortfolio] = useState<boolean>(false)
   const { t } = useLanguage()
+
+  // Default response hints in English
+  const [responseHints, setResponseHints] = useState<string[]>([
+    "What is your target amount?",
+    "How long do you plan to invest?",
+    "How much can you contribute monthly?",
+    "What is your risk tolerance level? (1-10)",
+  ])
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -39,36 +50,101 @@ export function ChatInterface({ walletAddress, onConsultationComplete }: ChatInt
     inputRef.current?.focus()
   }, [])
 
+  // Check if wallet has an existing portfolio
+  useEffect(() => {
+    const checkPortfolio = async () => {
+      if (!walletAddress) return
+
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/checkportfolio/${walletAddress}`)
+        if (response.ok) {
+          const data = await response.json()
+          setHasPortfolio(data.has_portfolio)
+
+          // Update hints based on portfolio status (in English)
+          if (data.has_portfolio) {
+            setResponseHints([
+              "How would you like to adjust your current portfolio?",
+              "Would you like to change your target amount or timeline?",
+              "Do you want to adjust your monthly contribution?",
+              "Has your risk tolerance changed?",
+            ])
+          }
+        }
+      } catch (error) {
+        console.error("Error checking portfolio:", error)
+      }
+    }
+
+    checkPortfolio()
+  }, [walletAddress])
+
   // Start chatbot session on component mount
   useEffect(() => {
-    async function initChatbot() {
-      setIsTyping(true)
-      try {
-        const response = await startChatbotSession(walletAddress)
+    initChatbot()
+  }, [walletAddress])
 
-        if (response.text) {
-          const aiResponse: Message = {
-            id: Date.now().toString(),
-            content: response.text,
-            role: "assistant",
-            timestamp: new Date(),
+  // Extract examples from the latest AI message
+  useEffect(() => {
+    const latestMessage = messages[messages.length - 1]
+    if (latestMessage && latestMessage.role === "assistant" && latestMessage.example) {
+      try {
+        // Try to parse the example as JSON if it's a string
+        let exampleData: string[] = []
+        if (typeof latestMessage.example === "string") {
+          try {
+            const parsed = JSON.parse(latestMessage.example)
+            if (Array.isArray(parsed)) {
+              exampleData = parsed
+            } else if (typeof parsed === "object") {
+              // If it's an object with numbered keys or other format
+              exampleData = Object.values(parsed).map((v) => String(v))
+            }
+          } catch {
+            // If it's not valid JSON, split by newlines or commas
+            exampleData = latestMessage.example
+              .split(/[\n,]/)
+              .map((s) => s.trim())
+              .filter(Boolean)
           }
-          setMessages([aiResponse])
-        } else if (response.status === "error") {
-          console.error("Error starting chatbot session:", response.message)
-          // Add a fallback message
-          const fallbackMessage: Message = {
-            id: "welcome",
-            content:
-              "Hello, I'm Solly, SolPort's AI asset manager.\n\nI'll help you achieve your cryptocurrency investment goals.\n\nThrough a simple conversation, I'll create a customized portfolio for you.\n\nWhat financial goals would you like to achieve with cryptocurrency investment?",
-            role: "assistant",
-            timestamp: new Date(),
-          }
-          setMessages([fallbackMessage])
+        } else if (Array.isArray(latestMessage.example)) {
+          exampleData = latestMessage.example.map(String)
         }
-        setSessionStarted(true)
+
+        if (exampleData.length > 0) {
+          setResponseHints(exampleData)
+        }
       } catch (error) {
-        console.error("Failed to start chatbot session:", error)
+        console.error("Error parsing example data:", error)
+      }
+    }
+  }, [messages])
+
+  const initChatbot = async () => {
+    if (!walletAddress) {
+      setSessionError("Wallet address is required to start a chat session")
+      return
+    }
+
+    setIsTyping(true)
+    setSessionError(null)
+
+    try {
+      const response = await startChatbotSession(walletAddress)
+
+      if (response.text) {
+        const aiResponse: Message = {
+          id: Date.now().toString(),
+          content: response.text,
+          example: response.example,
+          role: "assistant",
+          timestamp: new Date(),
+        }
+        setMessages([aiResponse])
+      } else if (response.status === "error") {
+        console.error("Error starting chatbot session:", response.message)
+        setSessionError(`Failed to start chat: ${response.message}`)
+
         // Add a fallback message
         const fallbackMessage: Message = {
           id: "welcome",
@@ -78,14 +154,32 @@ export function ChatInterface({ walletAddress, onConsultationComplete }: ChatInt
           timestamp: new Date(),
         }
         setMessages([fallbackMessage])
-        setSessionStarted(true)
-      } finally {
-        setIsTyping(false)
       }
-    }
+      setSessionStarted(true)
+    } catch (error) {
+      console.error("Failed to start chatbot session:", error)
+      setSessionError("Failed to connect to chat service. Please try again later.")
 
-    initChatbot()
-  }, [walletAddress])
+      // Add a fallback message
+      const fallbackMessage: Message = {
+        id: "welcome",
+        content:
+          "Hello, I'm Solly, SolPort's AI asset manager.\n\nI'll help you achieve your cryptocurrency investment goals.\n\nThrough a simple conversation, I'll create a customized portfolio for you.\n\nWhat financial goals would you like to achieve with cryptocurrency investment?",
+        role: "assistant",
+        timestamp: new Date(),
+        example: JSON.stringify([
+          "I want to save for retirement",
+          "I need funds for my child's education",
+          "I'm looking to buy a house in 10 years",
+          "I want to grow my wealth over time",
+        ]),
+      }
+      setMessages([fallbackMessage])
+      setSessionStarted(true)
+    } finally {
+      setIsTyping(false)
+    }
+  }
 
   const handleSendMessage = async () => {
     if (!input.trim()) return
@@ -111,10 +205,14 @@ export function ChatInterface({ walletAddress, onConsultationComplete }: ChatInt
       }
 
       let responseText = ""
+      let responseExample = undefined
+
       if (response.text) {
         responseText = response.text
+        responseExample = response.example
       } else if (response.status === "error") {
         responseText = t("chat.error")
+        setSessionError(`Error: ${response.message || "Unknown error"}`)
       } else {
         responseText = JSON.stringify(response)
       }
@@ -122,13 +220,20 @@ export function ChatInterface({ walletAddress, onConsultationComplete }: ChatInt
       const aiResponse: Message = {
         id: (Date.now() + 1).toString(),
         content: responseText,
+        example: responseExample,
         role: "assistant",
         timestamp: new Date(),
       }
 
       setMessages((prev) => [...prev, aiResponse])
+
+      // If no examples were provided, generate context-based examples in English
+      if (!responseExample) {
+        updateResponseHintsBasedOnContext(input, responseText)
+      }
     } catch (error) {
       console.error("Error sending message:", error)
+      setSessionError("Failed to send message. Please try again.")
 
       const errorResponse: Message = {
         id: (Date.now() + 1).toString(),
@@ -140,6 +245,129 @@ export function ChatInterface({ walletAddress, onConsultationComplete }: ChatInt
       setMessages((prev) => [...prev, errorResponse])
     } finally {
       setIsTyping(false)
+    }
+  }
+
+  // Update response hints based on conversation context (in English)
+  const updateResponseHintsBasedOnContext = (userMessage: string, aiResponse: string) => {
+    const userMsgLower = userMessage.toLowerCase()
+    const aiMsgLower = aiResponse.toLowerCase()
+
+    if (
+      userMsgLower.includes("goal") ||
+      aiMsgLower.includes("goal") ||
+      userMsgLower.includes("target") ||
+      aiMsgLower.includes("target")
+    ) {
+      setResponseHints([
+        "I need $500,000 for retirement",
+        "I want to save $200,000 for my child's education",
+        "I'm aiming for $300,000 to buy a house",
+        "I need $100,000 in 10 years",
+      ])
+    } else if (
+      userMsgLower.includes("period") ||
+      aiMsgLower.includes("period") ||
+      userMsgLower.includes("time") ||
+      aiMsgLower.includes("time") ||
+      userMsgLower.includes("years") ||
+      aiMsgLower.includes("years")
+    ) {
+      setResponseHints([
+        "I plan to invest for 10 years",
+        "I need the funds in 15 years",
+        "I'm thinking of a 20-year long-term investment",
+        "I want a 5-year short-term investment",
+      ])
+    } else if (
+      userMsgLower.includes("monthly") ||
+      aiMsgLower.includes("monthly") ||
+      userMsgLower.includes("contribution") ||
+      aiMsgLower.includes("contribution") ||
+      userMsgLower.includes("invest") ||
+      aiMsgLower.includes("invest")
+    ) {
+      setResponseHints([
+        "I can invest 100 SOL monthly",
+        "I plan to contribute 50 SOL per month",
+        "I can invest up to 200 SOL monthly",
+        "I can make a one-time investment of 1000 SOL",
+      ])
+    } else if (
+      userMsgLower.includes("risk") ||
+      aiMsgLower.includes("risk") ||
+      userMsgLower.includes("tolerance") ||
+      aiMsgLower.includes("tolerance")
+    ) {
+      setResponseHints([
+        "I can tolerate high risk (8/10)",
+        "I prefer moderate risk (5/10)",
+        "I prefer safe investments (3/10)",
+        "I'm willing to take maximum risk for higher returns (9/10)",
+      ])
+    }
+  }
+
+  const handleResetChatbotSession = async () => {
+    setMessages([])
+    setIsTyping(true)
+    setSessionError(null)
+    setSessionStarted(false)
+
+    try {
+      const response = await resetChatbotSession(walletAddress)
+
+      if (response.text) {
+        const aiResponse: Message = {
+          id: Date.now().toString(),
+          content: response.text,
+          example: response.example,
+          role: "assistant",
+          timestamp: new Date(),
+        }
+        setMessages([aiResponse])
+      } else if (response.status === "error") {
+        console.error("Error resetting chatbot session:", response.message)
+        setSessionError(`Failed to reset chat: ${response.message}`)
+
+        // Add a fallback message
+        const fallbackMessage: Message = {
+          id: "welcome",
+          content:
+            "Hello, I'm Solly, SolPort's AI asset manager.\n\nI'll help you achieve your cryptocurrency investment goals.\n\nThrough a simple conversation, I'll create a customized portfolio for you.\n\nWhat financial goals would you like to achieve with cryptocurrency investment?",
+          role: "assistant",
+          timestamp: new Date(),
+          example: JSON.stringify([
+            "I want to save for retirement",
+            "I need funds for my child's education",
+            "I'm looking to buy a house in 10 years",
+            "I want to grow my wealth over time",
+          ]),
+        }
+        setMessages([fallbackMessage])
+      }
+    } catch (error) {
+      console.error("Failed to reset chatbot session:", error)
+      setSessionError("Failed to reset chat. Please try again later.")
+
+      // Add a fallback message
+      const fallbackMessage: Message = {
+        id: "welcome",
+        content:
+          "Hello, I'm Solly, SolPort's AI asset manager.\n\nI'll help you achieve your cryptocurrency investment goals.\n\nThrough a simple conversation, I'll create a customized portfolio for you.\n\nWhat financial goals would you like to achieve with cryptocurrency investment?",
+        role: "assistant",
+        timestamp: new Date(),
+        example: JSON.stringify([
+          "I want to save for retirement",
+          "I need funds for my child's education",
+          "I'm looking to buy a house in 10 years",
+          "I want to grow my wealth over time",
+        ]),
+      }
+      setMessages([fallbackMessage])
+    } finally {
+      setIsTyping(false)
+      setSessionStarted(true)
     }
   }
 
@@ -175,9 +403,58 @@ export function ChatInterface({ walletAddress, onConsultationComplete }: ChatInt
     onConsultationComplete(mockResult)
   }
 
+  // Render response hints
+  const renderResponseHints = () => {
+    if (!sessionStarted || isTyping) return null
+
+    // Get the latest message
+    const latestMessage = messages[messages.length - 1]
+
+    // Only show hints if the latest message is from the assistant
+    if (!latestMessage || latestMessage.role !== "assistant") return null
+
+    return (
+      <div className="mt-4 p-3 bg-[#1a1e30] rounded-lg">
+        <div className="flex items-center text-solport-textSecondary mb-2">
+          <Lightbulb className="h-4 w-4 mr-1" />
+          <span className="text-sm">Suggested responses:</span>
+        </div>
+        <div className="space-y-2">
+          {responseHints.map((hint, index) => (
+            <button
+              key={index}
+              className="block w-full text-left text-sm bg-[#242b42] hover:bg-[#2a324e] p-2 rounded-md transition-colors"
+              onClick={() => {
+                setInput(hint)
+                inputRef.current?.focus()
+              }}
+            >
+              {hint}
+            </button>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="bg-[#161a2c] rounded-lg p-6 mb-6 flex flex-col h-[500px]">
       <h2 className="text-xl font-bold mb-4">{t("chat.title")}</h2>
+
+      {/* Session Error Banner */}
+      {sessionError && (
+        <div className="bg-red-900/30 border border-red-500 text-red-100 px-4 py-2 rounded-md mb-4 flex items-center justify-between">
+          <span>{sessionError}</span>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleResetChatbotSession}
+            className="text-red-100 hover:text-white hover:bg-red-800/30"
+          >
+            <RefreshCw className="h-4 w-4 mr-1" /> Retry
+          </Button>
+        </div>
+      )}
 
       {/* Chat Messages */}
       <div className="flex-1 overflow-y-auto mb-4 space-y-4">
@@ -219,6 +496,9 @@ export function ChatInterface({ walletAddress, onConsultationComplete }: ChatInt
         <div ref={messagesEndRef} />
       </div>
 
+      {/* Response Hints */}
+      {renderResponseHints()}
+
       {/* Input Area */}
       <div className="mt-auto">
         <div className="flex items-center gap-2">
@@ -242,6 +522,16 @@ export function ChatInterface({ walletAddress, onConsultationComplete }: ChatInt
           </Button>
         </div>
         <div className="mt-2 text-xs text-solport-textSecondary text-center">{t("chat.disclaimer")}</div>
+        <div className="mt-2 text-center">
+          <Button
+            onClick={handleResetChatbotSession}
+            variant="outline"
+            size="sm"
+            className="text-xs bg-transparent border-solport-accent text-solport-accent hover:bg-solport-accent hover:text-white"
+          >
+            {t("chat.resetConversation") || "Reset Conversation"}
+          </Button>
+        </div>
 
         {/* For demo purposes only - this would be removed in production */}
         <div className="mt-4 text-center">

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts"
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts"
 import { Button } from "@/components/ui/button"
 import { Check, RefreshCw } from "lucide-react"
 import { getAssetAnalysis } from "@/lib/api/portfolio"
@@ -103,11 +103,22 @@ export function PortfolioConfirmation({ result, onConfirm, onRetry, walletAddres
                   paddingAngle={0}
                   dataKey="value"
                   strokeWidth={0}
+                  animationBegin={0}
+                  animationDuration={1000}
+                  isAnimationActive={true}
                 >
                   {pieData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
+                <Tooltip
+                  formatter={(value, name) => [`${value.toFixed(1)}%`, name]}
+                  contentStyle={{
+                    backgroundColor: "#1E293B",
+                    borderColor: "#334155",
+                    color: "white",
+                  }}
+                />
               </PieChart>
             </ResponsiveContainer>
           </div>
