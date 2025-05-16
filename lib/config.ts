@@ -1,8 +1,8 @@
 // API configuration
 export const API_CONFIG = {
-  baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1/8000';
+  baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1/8000',
   maxRetries: 2,
-  timeout: 10000, // 10 seconds
+  timeout: 20000, // 20 seconds
 }
 
 // Wallet configuration

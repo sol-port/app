@@ -7,7 +7,7 @@ const API_BASE_URL = API_CONFIG.baseUrl || "http://localhost:8000"
 const MAX_RETRIES = API_CONFIG.maxRetries || 2
 
 // Timeout for API requests in milliseconds
-const API_TIMEOUT = API_CONFIG.timeout || 10000
+const API_TIMEOUT = API_CONFIG.timeout || 20000
 
 /**
  * Generic API request function with error handling, retries, and fallbacks
