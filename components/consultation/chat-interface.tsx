@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation'
 interface Message {
   id: string
   content: string
+  example?: string
   role: "user" | "assistant"
   timestamp: Date
 }
@@ -137,6 +138,7 @@ export function ChatInterface({ walletAddress, onConsultationComplete }: ChatInt
       const aiResponse: Message = {
         id: (Date.now() + 1).toString(),
         content: responseText,
+        example: response.example,
         role: "assistant",
         timestamp: new Date(),
       }
@@ -149,6 +151,7 @@ export function ChatInterface({ walletAddress, onConsultationComplete }: ChatInt
       const errorResponse: Message = {
         id: (Date.now() + 1).toString(),
         content: t("chat.error"),
+        example: "example",
         role: "assistant",
         timestamp: new Date(),
       }
@@ -275,6 +278,11 @@ export function ChatInterface({ walletAddress, onConsultationComplete }: ChatInt
               }`}
             >
               <div className="whitespace-pre-line">{message.content}</div>
+              {message.example && (
+                <div className="mt-2 text-xs text-solport-textSecondary text-center">
+                  Example: {message.example}
+                </div>
+              )}
             </div>
             {message.role === "user" && (
               <div className="w-10 h-10 rounded-full bg-[#273344] flex items-center justify-center ml-3">
