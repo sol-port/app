@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useWallet } from "@solana/wallet-adapter-react"
 import DashboardLayout from "../dashboard-layout"
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -11,6 +12,7 @@ import { useLanguage } from "@/context/language-context"
 import { getAutomationSettings, updateAutomationSettings } from "@/lib/api/client"
 
 export default function AutomationPage() {
+  const { connected, publicKey } = useWallet()
   const { t } = useLanguage()
   const [autoRebalancing, setAutoRebalancing] = useState(true)
   const [autoContribution, setAutoContribution] = useState(true)
@@ -23,9 +25,9 @@ export default function AutomationPage() {
     async function fetchAutomationSettings() {
       setLoading(true)
       try {
-        // In a real app, you would get the wallet address from the wallet adapter
-        // For now, we'll use a dummy address
-        const walletAddress = "5Uj9vWwTGYTGYvs8XgXUhsgmKNtCk8hbVnrQ9ExKJJQa"
+        // Get the wallet address from the wallet adapter
+        const mockAddress = "5Uj9vWwTGYTGYvs8XgXUhsgmKNtCk8hbVnrQ9ExKJJQa"
+        const walletAddress = publicKey?.toString() || mockAddress
         const data = await getAutomationSettings(walletAddress)
         setAutomationData(data)
 
@@ -47,7 +49,7 @@ export default function AutomationPage() {
     }
 
     fetchAutomationSettings()
-  }, [])
+  }, [connected, publicKey])
 
   // Mock data
   const activeAutomations = 3
@@ -274,8 +276,9 @@ export default function AutomationPage() {
               className="bg-solport-accent hover:bg-solport-accent2"
               onClick={async () => {
                 try {
-                  // In a real app, you would get the wallet address from the wallet adapter
-                  const walletAddress = "5Uj9vWwTGYTGYvs8XgXUhsgmKNtCk8hbVnrQ9ExKJJQa"
+                  // Get the wallet address from the wallet adapter
+                  const mockAddress = "5Uj9vWwTGYTGYvs8XgXUhsgmKNtCk8hbVnrQ9ExKJJQa"
+                  const walletAddress = publicKey?.toString() || mockAddress
 
                   // Update rebalancing settings
                   await updateAutomationSettings(walletAddress, "rebalancing", {

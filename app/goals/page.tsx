@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useWallet } from "@solana/wallet-adapter-react"
 import DashboardLayout from "../dashboard-layout"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -10,6 +11,7 @@ import { useLanguage } from "@/context/language-context"
 import { getTargetInfo } from "@/lib/api/client"
 
 export default function GoalsPage() {
+  const { connected, publicKey } = useWallet()
   const { t } = useLanguage()
   const [progress, setProgress] = useState(0)
   const [simulationData, setSimulationData] = useState<any[]>([])
@@ -21,9 +23,9 @@ export default function GoalsPage() {
     async function fetchTargetInfo() {
       setLoading(true)
       try {
-        // In a real app, you would get the wallet address from the wallet adapter
-        // For now, we'll use a dummy address
-        const walletAddress = "5Uj9vWwTGYTGYvs8XgXUhsgmKNtCk8hbVnrQ9ExKJJQa"
+        // Get the wallet address from the wallet adapter
+        const mockAddress = "5Uj9vWwTGYTGYvs8XgXUhsgmKNtCk8hbVnrQ9ExKJJQa"
+        const walletAddress = publicKey?.toString() || mockAddress
         const data = await getTargetInfo(walletAddress)
         setTargetData(data)
       } catch (error) {
@@ -72,7 +74,7 @@ export default function GoalsPage() {
     }
 
     generateData()
-  }, [currentAssets])
+  }, [connected, publicKey, currentAssets])
 
   // Animate progress bar
   useEffect(() => {

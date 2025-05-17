@@ -77,7 +77,7 @@ async function apiRequest<T>(endpoint: string, options: RequestInit = {}, retrie
 /**
  * Validate wallet address format
  */
-function validateWalletAddress(address: string): boolean {
+export function validateWalletAddress(address: string): boolean {
   return WALLET_CONFIG.addressRegex.test(address)
 }
 

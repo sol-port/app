@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useWallet } from "@solana/wallet-adapter-react"
 import DashboardLayout from "../dashboard-layout"
 import { Search } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
@@ -18,6 +19,7 @@ import UsdtIcon from "/public/USDT.png"
 import JitoSolIcon from "/public/JitoSOL.png"
 
 export default function AnalysisPage() {
+  const { connected, publicKey } = useWallet()
   const { t } = useLanguage()
   const [assetData, setAssetData] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
@@ -27,9 +29,9 @@ export default function AnalysisPage() {
     async function fetchAssetData() {
       setLoading(true)
       try {
-        // In a real app, you would get the wallet address from the wallet adapter
-        // For now, we'll use a dummy address
-        const walletAddress = "5Uj9vWwTGYTGYvs8XgXUhsgmKNtCk8hbVnrQ9ExKJJQa"
+        // Get the wallet address from the wallet adapter
+        const mockAddress = "5Uj9vWwTGYTGYvs8XgXUhsgmKNtCk8hbVnrQ9ExKJJQa"
+        const walletAddress = publicKey?.toString() || mockAddress
         const analysisData = await getAssetAnalysis(walletAddress)
 
         // Transform the API data to match our component's expected format
@@ -79,7 +81,7 @@ export default function AnalysisPage() {
     }
 
     fetchAssetData()
-  }, [])
+  }, [connected, publicKey])
 
   // Calculate totals
   const totalValue = assetData.reduce((sum, asset) => sum + asset.value, 0)

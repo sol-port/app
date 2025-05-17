@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import { useWallet } from "@solana/wallet-adapter-react"
 import DashboardLayout from "../dashboard-layout"
+import { validateWalletAddress } from "@/lib/api/client"
 import { getPortfolioData } from "@/lib/api/client"
 import type { PortfolioData } from "@/lib/api/portfolio" // Keep the type import
 import { AssetSummaryCard } from "@/components/dashboard/asset-summary-card"
@@ -18,29 +20,32 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { AlertCircle, RefreshCw } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { useAppState } from "@/context/app-state-context"
 
 export default function OverviewPage() {
   const [portfolioData, setPortfolioData] = useState<PortfolioData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
-  const { walletAddress } = useAppState()
+  const { connected, publicKey } = useWallet()
 
   const fetchPortfolioData = async () => {
     setLoading(true)
     setError(null)
 
     try {
-      // Use the wallet address from context if available, otherwise use a default
-      const address = walletAddress || "5Uj9vWwTGYTGYvs8XgXUhsgmKNtCk8hbVnrQ9ExKJJQa"
+      // Check if the wallet is connected
+      if (!connected) {
+        throw new Error("Wallet not connected")
+      }
 
       // Validate the address format before making the API call
-      if (!/^[A-Za-z0-9]{32,44}$/.test(address)) {
+      const mockAddress = "5Uj9vWwTGYTGYvs8XgXUhsgmKNtCk8hbVnrQ9ExKJJQa"
+      const walletAddress = publicKey?.toString() || mockAddress
+      if (validateWalletAddress(walletAddress)) {
         throw new Error("Invalid wallet address format")
       }
 
-      const data = await getPortfolioData(address)
+      const data = await getPortfolioData(walletAddress)
       setPortfolioData(data)
     } catch (error) {
       console.error("Failed to load portfolio data:", error)
@@ -52,7 +57,7 @@ export default function OverviewPage() {
 
   useEffect(() => {
     fetchPortfolioData()
-  }, [walletAddress])
+  }, [connected, publicKey])
 
   const handleCreatePortfolio = () => {
     router.push("/chat")

@@ -8,7 +8,7 @@ import { useAppState } from "@/context/app-state-context"
 import { Skeleton } from "@/components/ui/skeleton"
 
 export default function DashboardLayout({ children, title }: { children: ReactNode; title?: string }) {
-  const { isConsultationCompleted, walletAddress } = useAppState()
+  const { isConsultationCompleted } = useAppState()
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {

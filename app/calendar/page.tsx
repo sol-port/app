@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useWallet } from "@solana/wallet-adapter-react"
 import DashboardLayout from "../dashboard-layout"
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -10,6 +11,7 @@ import { useLanguage } from "@/context/language-context"
 import { getNotifications } from "@/lib/api/client"
 
 export default function CalendarPage() {
+  const { connected, publicKey } = useWallet()
   const { t } = useLanguage()
   const [notifications, setNotifications] = useState([
     {
@@ -59,9 +61,9 @@ export default function CalendarPage() {
   useEffect(() => {
     async function fetchNotifications() {
       try {
-        // In a real app, you would get the wallet address from the wallet adapter
-        // For now, we'll use a dummy address
-        const walletAddress = "5Uj9vWwTGYTGYvs8XgXUhsgmKNtCk8hbVnrQ9ExKJJQa"
+        // Get the wallet address from the wallet adapter
+        const mockAddress = "5Uj9vWwTGYTGYvs8XgXUhsgmKNtCk8hbVnrQ9ExKJJQa"
+        const walletAddress = publicKey?.toString() || mockAddress
         const data = await getNotifications(walletAddress)
 
         if (data && Array.isArray(data)) {
@@ -86,7 +88,7 @@ export default function CalendarPage() {
     }
 
     fetchNotifications()
-  }, [t])
+  }, [connected, publicKey, t])
 
   // Count unread, urgent, and important notifications
   const unreadCount = notifications.filter((n) => !n.read).length
