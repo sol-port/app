@@ -51,7 +51,7 @@ function SidebarContent() {
     <div className="w-56 h-full bg-solport-card border-r border-[#334155] border-0 flex flex-col">
       <div className="p-4">
         <Link href={isConsultationCompleted ? "/overview" : "/chat"} className="flex items-center space-x-2">
-          <OptimizedImage src="/SolPort.svg" alt="SolPort Logo" width={100} height={24} />
+          <OptimizedImage src="/sol-port.svg" alt="SolPort Logo" width={100} height={24} />
         </Link>
       </div>
       <nav className="flex-1 p-2 space-y-1">

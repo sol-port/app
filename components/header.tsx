@@ -43,7 +43,7 @@ function HeaderContent() {
               variant="outline"
               className="bg-white text-solport-accent rounded-full px-4 py-2 border-0 flex items-center"
             >
-              <OptimizedImage src="/SolanaSmall.png" alt="Solana" width={20} height={20} className="mr-2" />
+              <OptimizedImage src="/solana-small.png" alt="Solana" width={20} height={20} className="mr-2" />
               {network}
               <ChevronDown className="h-4 w-4 ml-2" />
             </Button>

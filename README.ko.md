@@ -2,7 +2,7 @@
 
 SolPort는 솔라나 기반 자산을 관리하고 모니터링하기 위한 웹3 애플리케이션입니다. AI 기반 로보어드바이저로서 포트폴리오 제안, 조정 및 모니터링 기능을 제공합니다.
 
-![SolPort 로고](/public/SolPort.svg)
+![SolPort 로고](/public/sol-port.svg)
 
 ## 주요 기능
 
@@ -133,7 +133,7 @@ sol-port-app/
 │ ├── image-loader.ts # 이미지 로더
 │ └── utils.ts # 기타 유틸리티
 ├── public/ # 정적 파일
-│ ├── SolPort.svg # 로고
+│ ├── sol-port.svg # 로고
 │ └── ...
 ├── translations/ # 다국어 번역 파일
 │ ├── en_US.ts # 영어 번역

@@ -2,7 +2,7 @@
 
 SolPort is a web3 application designed to manage and monitor Solana-based assets. It functions as an AI-based robo-advisor, offering portfolio suggestions, adjustments, and monitoring capabilities.
 
-![SolPort Logo](/public/SolPort.svg)
+![SolPort Logo](/public/sol-port.svg)
 
 ## Key Features
 
@@ -133,7 +133,7 @@ sol-port-app/
 │ ├── image-loader.ts # Image loader
 │ └── utils.ts # Other utilities
 ├── public/ # Static files
-│ ├── SolPort.svg # Logo
+│ ├── sol-port.svg # Logo
 │ └── ...
 ├── translations/ # Multilingual translation files
 │ ├── en_US.ts # English translations

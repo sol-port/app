@@ -12,11 +12,11 @@ import { useLanguage } from "@/context/language-context"
 import { getAssetAnalysis } from "@/lib/api/client"
 
 // Import crypto icons - fixed paths
-const BtcIcon = "/public/BTC.png"
-const EthIcon = "/public/ETH.png"
-const SolIcon = "/public/SOL.png"
-const UsdtIcon = "/public/USDT.png"
-const JitoSolIcon = "/public/JitoSOL.png"
+const BtcIcon = "/public/btc.png"
+const EthIcon = "/public/eth.png"
+const SolIcon = "/public/sol.png"
+const UsdtIcon = "/public/usdt.png"
+const JitoSolIcon = "/public/jitosol.png"
 
 export default function AnalysisPage() {
   const { connected, publicKey } = useWallet()
