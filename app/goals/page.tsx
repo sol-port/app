@@ -51,7 +51,7 @@ export default function GoalsPage() {
     targetData?.total_asset_value && targetData?.goal_amount
       ? Math.round((targetData.total_asset_value / targetData.goal_amount) * 100)
       : 108
-  const riskLevel = "중위험"
+  const riskLevel = "Medium Risk"
   const riskScore = targetData?.expected_volatility || 5.8
 
   // Generate simulation data
@@ -63,7 +63,7 @@ export default function GoalsPage() {
       const expectedPath = years.map((year) => {
         const growthFactor = 1 + year * 0.15
         return {
-          year: year === 0 ? "현재" : `${year}년`,
+          year: year === 0 ? "Current" : `Year ${year}`,
           expected: Math.round(currentAssets * growthFactor),
           optimistic: Math.round(currentAssets * growthFactor * 1.2),
           pessimistic: Math.round(currentAssets * growthFactor * 0.8),
@@ -237,7 +237,7 @@ export default function GoalsPage() {
                       defaultValue="15"
                       className="w-full h-2 bg-[#334155] rounded-lg appearance-none cursor-pointer"
                     />
-                    <span className="ml-2 text-sm">15년</span>
+                    <span className="ml-2 text-sm">15 years</span>
                   </div>
                 </div>
               </div>

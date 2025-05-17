@@ -41,11 +41,6 @@ function SidebarContent() {
       disabled: !isConsultationCompleted,
     },
     {
-      name: t("sidebar.calendar"),
-      href: "/calendar",
-      disabled: !isConsultationCompleted,
-    },
-    {
       name: t("sidebar.notifications"),
       href: "/calendar",
       disabled: !isConsultationCompleted,

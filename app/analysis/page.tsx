@@ -11,12 +11,12 @@ import { OptimizedImage } from "@/components/ui/optimized-image"
 import { useLanguage } from "@/context/language-context"
 import { getAssetAnalysis } from "@/lib/api/client"
 
-// Import crypto icons
-import BtcIcon from "/public/BTC.png"
-import EthIcon from "/public/ETH.png"
-import SolIcon from "/public/SOL.png"
-import UsdtIcon from "/public/USDT.png"
-import JitoSolIcon from "/public/JitoSOL.png"
+// Import crypto icons - fixed paths
+const BtcIcon = "/public/BTC.png"
+const EthIcon = "/public/ETH.png"
+const SolIcon = "/public/SOL.png"
+const UsdtIcon = "/public/USDT.png"
+const JitoSolIcon = "/public/JitoSOL.png"
 
 export default function AnalysisPage() {
   const { connected, publicKey } = useWallet()
@@ -137,7 +137,7 @@ export default function AnalysisPage() {
               <CardContent className="p-4">
                 <div className="text-solport-textSecondary text-sm">{t("analysis.totalReturn")}</div>
                 <div className="text-2xl font-bold mt-1">+{totalReturn}%</div>
-                <div className="text-solport-success text-sm mt-1">+2.1% (7일)</div>
+                <div className="text-solport-success text-sm mt-1">+2.1% (7d)</div>
               </CardContent>
             </Card>
 
@@ -145,7 +145,7 @@ export default function AnalysisPage() {
               <CardContent className="p-4">
                 <div className="text-solport-textSecondary text-sm">{t("analysis.averageAPY")}</div>
                 <div className="text-2xl font-bold mt-1">{averageAPY}%</div>
-                <div className="text-solport-success text-sm mt-1">모델 대비 +1.5%</div>
+                <div className="text-solport-success text-sm mt-1">+1.5% vs model</div>
               </CardContent>
             </Card>
           </div>
@@ -297,13 +297,13 @@ export default function AnalysisPage() {
                         <path d="M8 12h8" />
                       </svg>
                     </div>
-                    <div className="font-medium">AI 인사이트</div>
+                    <div className="font-medium">AI Insights</div>
                   </div>
 
                   <div className="space-y-2 text-sm">
                     <div>{t("analysis.aiInsight").replace("{percent}", "8.2")}</div>
-                    <div>JitoSOL 비중 5% 추가 고려</div>
-                    <div>다음 7일 간 SOL 가격 상승 전망 (82% 확률)</div>
+                    <div>Consider adding 5% JitoSOL allocation</div>
+                    <div>SOL price expected to rise in next 7 days (82% probability)</div>
                   </div>
                 </div>
               </div>

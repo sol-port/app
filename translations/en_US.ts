@@ -29,29 +29,44 @@ export const en_US: Record<string, string> = {
   "wallet.connected": "Wallet Connected",
 
   // Chat Interface
-  "chat.title": "AI Investment Consultation",
+  "chat.title": "AI Consultation",
   "chat.placeholder": "Type your message...",
-  "chat.suggestedResponses": "Suggested Responses:",
-  "chat.disclaimer":
-    "The AI investment advisor provides general investment information. For advice tailored to your personal financial situation, please consult a professional financial advisor.",
-  "chat.error": "Sorry, an error occurred while processing your request. Please try again.",
+  "chat.suggestedResponses": "Suggested responses:",
+  "chat.disclaimer": "Your data is securely processed to provide personalized recommendations.",
+  "chat.error": "Sorry, I couldn't process that. Let's try a different approach.",
+  "chat.connectionWarning":
+    "I'm experiencing some connection issues. If this continues, I'll offer alternative options.",
+  "chat.resetConversation": "Reset Conversation",
+  "chat.errorFallback.title": "I'm having trouble connecting to our servers",
+  "chat.errorFallback.description":
+    "While we're working on the connection, I can still help you explore portfolio options. What type of investment strategy interests you?",
+  "chat.errorFallback.retry": "Retry Connection",
+  "chat.errorFallback.random": "Show Random Portfolio",
+  "chat.errorFallback.surprise": "Surprise Me",
+  "chat.errorFallback.portfolioReady": "Your portfolio is ready!",
+  "chat.errorFallback.portfolioReadyDesc":
+    "I've created a personalized portfolio based on your selection. Let's explore it together.",
+  "chat.errorFallback.viewPortfolio": "View My Portfolio",
 
   // Portfolio Confirmation
-  "portfolio.title": "Portfolio Analysis Results",
-  "portfolio.description": "Optimal portfolio and achievement probability analysis based on {simulations} simulations",
-  "portfolio.composition": "Recommended Portfolio Composition",
-  "portfolio.metrics": "Performance Metrics",
+  "portfolio.title": "Portfolio Recommendation",
+  "portfolio.description": "Based on {simulations} simulations, here's your optimized portfolio:",
+  "portfolio.composition": "Asset Allocation",
+  "portfolio.metrics": "Portfolio Metrics",
   "portfolio.expectedReturn": "Expected Annual Return",
-  "portfolio.expectedVolatility": "Expected Annual Volatility",
+  "portfolio.expectedVolatility": "Expected Volatility",
   "portfolio.fundedRatio": "Funded Ratio",
-  "portfolio.successProbability": "Goal Achievement Probability",
+  "portfolio.successProbability": "Success Probability",
+  "portfolio.targetDate": "Target Date",
+  "portfolio.purpose": "Investment Purpose",
   "portfolio.analysis":
-    "With the current plan, you can achieve {percent}% of your target amount, and the probability of achieving your goal is {probability}%. Check out the improvement suggestions to increase your chances of success.",
-  "portfolio.improvements": "Improvement Suggestions",
+    "This portfolio has a {percent}% probability of meeting your financial goals. The success probability is {probability}%.",
+  "portfolio.improvements": "Suggested Improvements",
   "portfolio.increase": "Increase monthly contribution to {amount} SOL",
-  "portfolio.extend": "Extend investment period by 2 years (17 years)",
+  "portfolio.extend": "Extend investment period by 2 years",
   "portfolio.restart": "Restart Consultation",
-  "portfolio.next": "Next",
+  "portfolio.next": "Confirm & Continue",
+  "portfolio.mockNotice": "This is a sample portfolio created for demonstration purposes.",
 
   // Automation Settings
   "automation.title": "Automation Settings",
@@ -196,6 +211,7 @@ export const en_US: Record<string, string> = {
   "automationSettings.monthly": "Monthly",
   "automationSettings.threshold5": "5% or more",
   "automationSettings.autoContribution": "Auto Contribution",
+  "automationSettings.contributionAmount": '  "Auto Contribution',
   "automationSettings.contributionAmount": "Contribution Amount",
   "automationSettings.contributionDate": "Contribution Date",
   "automationSettings.goalStrategy": "Goal-based Strategy Adjustment",
@@ -204,6 +220,7 @@ export const en_US: Record<string, string> = {
   "automationSettings.adjustmentType": "Adjustment Type",
   "automationSettings.threshold80": "Below 80%",
   "automationSettings.quarterly": "Quarterly",
+  "automationSettings.yearly": "Yearly",
   "automationSettings.autoSuggestion": "Auto Suggestion (Manual Approval)",
   "automationSettings.note":
     "* Goal achievement ratio must fall below the threshold for strategy adjustment to be recommended.",
