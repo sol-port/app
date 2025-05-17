@@ -31,6 +31,7 @@ export const en_US: Record<string, string> = {
   // Chat Interface
   "chat.title": "AI Investment Consultation",
   "chat.placeholder": "Type your message...",
+  "chat.suggestedResponses": "Suggested Responses:",
   "chat.disclaimer":
     "The AI investment advisor provides general investment information. For advice tailored to your personal financial situation, please consult a professional financial advisor.",
   "chat.error": "Sorry, an error occurred while processing your request. Please try again.",

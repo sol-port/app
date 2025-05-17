@@ -456,7 +456,7 @@ export function ChatInterface({ walletAddress, onConsultationComplete }: ChatInt
       <div className="mt-4 p-3 bg-[#1a1e30] rounded-lg transition-all duration-300 ease-out transform translate-y-0 opacity-100">
         <div className="flex items-center text-solport-textSecondary mb-2">
           <Lightbulb className="h-4 w-4 mr-1" />
-          <span className="text-sm">{t("chat.suggestedResponses") || "Suggested Responses:"}</span>
+          <span className="text-sm">{t("chat.suggestedResponses")}</span>
         </div>
         <div className="space-y-2">
           {responseHints.map((hint, index) => (

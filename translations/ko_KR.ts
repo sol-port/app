@@ -31,6 +31,7 @@ export const ko_KR: Record<string, string> = {
   // Chat Interface
   "chat.title": "AI 투자 상담",
   "chat.placeholder": "메시지를 입력하세요...",
+  "chat.suggestedResponses": "이런 식으로 답변해보세요:",
   "chat.disclaimer":
     "AI 투자 상담사는 일반적인 투자 정보를 제공합니다. 개인 재무 상황에 맞는 전문적인 조언을 위해서는 전문 재무 상담사와 상담하세요.",
   "chat.error": "죄송합니다. 요청을 처리하는 중에 오류가 발생했습니다. 다시 시도해 주세요.",
