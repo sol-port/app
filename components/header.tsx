@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, Suspense } from "react"
-import Image from "next/image"
+import { OptimizedImage } from "@/components/ui/optimized-image"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { ChevronDown, Settings, Languages } from "lucide-react"
@@ -43,7 +43,7 @@ function HeaderContent() {
               variant="outline"
               className="bg-white text-solport-accent rounded-full px-4 py-2 border-0 flex items-center"
             >
-              <Image src="/SolanaSmall.png" alt="Solana" width={20} height={20} className="mr-2" />
+              <OptimizedImage src="/SolanaSmall.png" alt="Solana" width={20} height={20} className="mr-2" />
               {network}
               <ChevronDown className="h-4 w-4 ml-2" />
             </Button>

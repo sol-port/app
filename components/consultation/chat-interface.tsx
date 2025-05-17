@@ -3,9 +3,9 @@
 import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { useLanguage } from "@/context/language-context"
 import { Send, Bot, User, RefreshCw, Lightbulb } from "lucide-react"
 import { startChatbotSession, sendChatbotMessage } from "@/lib/api/chatbot"
+import { useLanguage } from "@/context/language-context"
 import { API_CONFIG } from "@/lib/config"
 
 // Base API URL from config
@@ -32,6 +32,9 @@ export function ChatInterface({ walletAddress, onConsultationComplete }: ChatInt
   const [sessionError, setSessionError] = useState<string | null>(null)
   const [hasPortfolio, setHasPortfolio] = useState<boolean>(false)
   const { t } = useLanguage()
+  const [inputFocused, setInputFocused] = useState(false)
+  const [isUserTyping, setIsUserTyping] = useState(false)
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   // AI response hints based on conversation context
   const [responseHints, setResponseHints] = useState<string[]>([
@@ -233,7 +236,7 @@ export function ChatInterface({ walletAddress, onConsultationComplete }: ChatInt
 
       // If no examples were provided, generate context-based examples in English
       if (!responseExample) {
-        updateResponseHintsBasedOnContext(input, responseText)
+        updateResponseHints(input, responseText)
       }
     } catch (error) {
       console.error("Error sending message:", error)
@@ -252,16 +255,16 @@ export function ChatInterface({ walletAddress, onConsultationComplete }: ChatInt
     }
   }
 
-  // Update response hints based on conversation context (in English)
-  const updateResponseHintsBasedOnContext = (userMessage: string, aiResponse: string) => {
+  // Update response hints based on conversation context
+  const updateResponseHints = (userMessage: string, aiResponse: string) => {
     const userMsgLower = userMessage.toLowerCase()
     const aiMsgLower = aiResponse.toLowerCase()
 
     if (
+      userMsgLower.includes("need") ||
+      aiMsgLower.includes("need") ||
       userMsgLower.includes("goal") ||
-      aiMsgLower.includes("goal") ||
-      userMsgLower.includes("target") ||
-      aiMsgLower.includes("target")
+      aiMsgLower.includes("goal")
     ) {
       setResponseHints([
         "I need $500,000 for retirement",
@@ -272,10 +275,10 @@ export function ChatInterface({ walletAddress, onConsultationComplete }: ChatInt
     } else if (
       userMsgLower.includes("period") ||
       aiMsgLower.includes("period") ||
+      userMsgLower.includes("year") ||
+      aiMsgLower.includes("year") ||
       userMsgLower.includes("time") ||
-      aiMsgLower.includes("time") ||
-      userMsgLower.includes("years") ||
-      aiMsgLower.includes("years")
+      aiMsgLower.includes("time")
     ) {
       setResponseHints([
         "I plan to invest for 10 years",
@@ -283,7 +286,12 @@ export function ChatInterface({ walletAddress, onConsultationComplete }: ChatInt
         "I'm thinking of a 20-year long-term investment",
         "I want a 5-year short-term investment",
       ])
-    } else if (userMessage.toLowerCase().includes("invest") || aiResponse.toLowerCase().includes("invest")) {
+    } else if (
+      userMsgLower.toLowerCase().includes("invest") ||
+      aiMsgLower.toLowerCase().includes("invest") ||
+      userMsgLower.toLowerCase().includes("contribute") ||
+      aiMsgLower.toLowerCase().includes("contribute")
+    ) {
       setResponseHints([
         "I can invest 100 SOL monthly",
         "I plan to contribute 50 SOL per month",
@@ -291,10 +299,10 @@ export function ChatInterface({ walletAddress, onConsultationComplete }: ChatInt
         "I can make a one-time investment of 1000 SOL",
       ])
     } else if (
+      userMsgLower.includes("safe") ||
+      aiMsgLower.includes("safe") ||
       userMsgLower.includes("risk") ||
-      aiMsgLower.includes("risk") ||
-      userMsgLower.includes("tolerance") ||
-      aiMsgLower.includes("tolerance")
+      aiMsgLower.includes("risk")
     ) {
       setResponseHints([
         "I can tolerate high risk (8/10)",
@@ -370,6 +378,34 @@ export function ChatInterface({ walletAddress, onConsultationComplete }: ChatInt
   }
   */
 
+  // Add this function to handle input changes with typing detection
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setInput(value)
+
+    // Set user typing state to true
+    setIsUserTyping(true)
+
+    // Clear any existing timeout
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current)
+    }
+
+    // Set a timeout to reset the typing state after 1.5 seconds of inactivity
+    typingTimeoutRef.current = setTimeout(() => {
+      setIsUserTyping(false)
+    }, 1500)
+  }
+
+  // Clean up the timeout on component unmount
+  useEffect(() => {
+    return () => {
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current)
+      }
+    }
+  }, [])
+
   // For demo purposes, let's add a function to simulate consultation completion
   const simulateConsultationComplete = () => {
     // This is just for testing - in a real app, this would come from the API
@@ -402,12 +438,22 @@ export function ChatInterface({ walletAddress, onConsultationComplete }: ChatInt
     onConsultationComplete(mockResult)
   }
 
+  // Add this function to get a dynamic placeholder based on focus state
+  const getInputPlaceholder = () => {
+    if (inputFocused && responseHints.length > 0) {
+      // When focused, show a random hint from the available hints
+      const randomIndex = Math.floor(Math.random() * responseHints.length)
+      return `Example: ${responseHints[randomIndex]}`
+    }
+    return t("chat.placeholder")
+  }
+
   // Render response hints
   const renderResponseHints = () => {
-    if (!sessionStarted || messages.length > 2 || isTyping) return null
+    if (!sessionStarted || messages.length > 2 || isTyping || (!inputFocused && !isUserTyping)) return null
 
     return (
-      <div className="mt-4 p-3 bg-[#1a1e30] rounded-lg">
+      <div className="mt-4 p-3 bg-[#1a1e30] rounded-lg transition-all duration-300 ease-out transform translate-y-0 opacity-100">
         <div className="flex items-center text-solport-textSecondary mb-2">
           <Lightbulb className="h-4 w-4 mr-1" />
           <span className="text-sm">{t("chat.suggestedResponses") || "Suggested Responses:"}</span>
@@ -464,6 +510,9 @@ export function ChatInterface({ walletAddress, onConsultationComplete }: ChatInt
               }`}
             >
               <div className="whitespace-pre-line">{message.content}</div>
+              <div className="text-xs opacity-60 mt-2 text-right">
+                {new Date(message.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+              </div>
             </div>
             {message.role === "user" && (
               <div className="w-10 h-10 rounded-full bg-[#273344] flex items-center justify-center ml-3">
@@ -499,10 +548,14 @@ export function ChatInterface({ walletAddress, onConsultationComplete }: ChatInt
             <Input
               ref={inputRef}
               value={input}
-              onChange={(e) => setInput(e.target.value)}
+              onChange={handleInputChange}
               onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
-              placeholder={t("chat.placeholder")}
-              className="bg-[#273344] border-0 text-white focus-visible:ring-1 focus-visible:ring-solport-accent"
+              onFocus={() => setInputFocused(true)}
+              onBlur={() => setInputFocused(false)}
+              placeholder={getInputPlaceholder()}
+              className={`bg-[#273344] border-0 text-white focus-visible:ring-1 focus-visible:ring-solport-accent ${
+                isUserTyping && responseHints.length > 0 ? "border-l-4 border-l-solport-accent pl-3" : ""
+              }`}
               disabled={!sessionStarted || isTyping}
             />
           </div>

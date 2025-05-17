@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from "react"
 import DashboardLayout from "../dashboard-layout"
+import { Search } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
-import { Search } from "lucide-react"
-import Image from "next/image"
+import { OptimizedImage } from "@/components/ui/optimized-image"
 import { useLanguage } from "@/context/language-context"
 import { getAssetAnalysis } from "@/lib/api/client"
 
@@ -191,7 +191,7 @@ export default function AnalysisPage() {
                             <td className="p-4">
                               <div className="flex items-center">
                                 <div className="w-8 h-8 mr-3 rounded-full overflow-hidden">
-                                  <Image
+                                  <OptimizedImage
                                     src={asset.icon || "/placeholder.svg"}
                                     alt={asset.symbol}
                                     width={32}
@@ -243,7 +243,7 @@ export default function AnalysisPage() {
                 <div className="bg-[#1a1e30] p-4 rounded-lg">
                   <div className="flex items-center mb-3">
                     <div className="w-8 h-8 mr-3 rounded-full overflow-hidden">
-                      <Image src={SolIcon || "/placeholder.svg"} alt="SOL" width={32} height={32} />
+                      <OptimizedImage src={SolIcon || "/placeholder.svg"} alt="SOL" width={32} height={32} />
                     </div>
                     <div className="font-medium">Solana (SOL)</div>
                   </div>
@@ -258,7 +258,7 @@ export default function AnalysisPage() {
                 <div className="bg-[#1a1e30] p-4 rounded-lg">
                   <div className="flex items-center mb-3">
                     <div className="w-8 h-8 mr-3 rounded-full overflow-hidden">
-                      <Image src={JitoSolIcon || "/placeholder.svg"} alt="JitoSOL" width={32} height={32} />
+                      <OptimizedImage src={JitoSolIcon || "/placeholder.svg"} alt="JitoSOL" width={32} height={32} />
                     </div>
                     <div className="font-medium">JitoSOL</div>
                   </div>

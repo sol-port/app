@@ -37,9 +37,9 @@ export function SetupComplete({
       <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
         <Check className="h-8 w-8 text-white" />
       </div>
-      <h2 className="text-xl font-bold mb-2">{t('setup.completeTitle')}</h2>
+      <h2 className="text-xl font-bold mb-2">{t('setup.completeTitle') || "Portfolio Setup Complete!"}</h2>
       <p className="text-solport-textSecondary mb-6">
-        {t('setup.completeDesc')}
+        {t('setup.completeDesc') || "Initial portfolio setup is complete, congratulations!"}
       </p>
 
       <div className="bg-[#1a1e30] rounded-lg p-4 mb-6 inline-block">
@@ -47,9 +47,9 @@ export function SetupComplete({
           <div className="flex items-center">
             <div className="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
             <div className="text-left">
-              <div className="font-medium">트랜잭션 성공: #{portfolioId}</div>
+              <div className="font-medium">Transaction Success: #{portfolioId}</div>
               <div className="text-sm text-solport-textSecondary">
-                View on Solscan
+                Check in Solana Explorer
               </div>
             </div>
           </div>
@@ -66,22 +66,22 @@ export function SetupComplete({
       </div>
 
       <div className="space-y-4 mb-6 text-left">
-        <h3 className="font-medium">솔포트 대시보드의 주요 기능들</h3>
+        <h3 className="font-medium">Check in Solana Explorer</h3>
         <div className="flex items-start">
           <span className="w-2 h-2 rounded-full bg-solport-purple-400 mt-1.5 mr-2"></span>
-          <span>현재 자산 배분 및 총 가치 / 실시간 변동률</span>
+          <span>Current asset allocation and total value / real-time fluctuation rate</span>
         </div>
         <div className="flex items-start">
           <span className="w-2 h-2 rounded-full bg-solport-purple-400 mt-1.5 mr-2"></span>
-          <span>목표 달성 진행 상황 / 실시간 업데이트</span>
+          <span>Goal achievement progress / real-time updates</span>
         </div>
         <div className="flex items-start">
           <span className="w-2 h-2 rounded-full bg-solport-purple-400 mt-1.5 mr-2"></span>
-          <span>월별 자동 투자 / 자산 재조정 설정</span>
+          <span>Monthly automatic investment / asset rebalancing settings</span>
         </div>
         <div className="flex items-start">
           <span className="w-2 h-2 rounded-full bg-solport-purple-400 mt-1.5 mr-2"></span>
-          <span>수익 그래프 / 자산별 성과 비교</span>
+          <span>Profit graph / asset performance comparison</span>
         </div>
       </div>
 
@@ -89,13 +89,13 @@ export function SetupComplete({
         className="bg-solport-accent hover:bg-solport-accent2 text-white px-6 py-2 rounded-md"
         onClick={handleGoToDashboard}
       >
-        {t('setup.goToDashboard')}
+        {t('setup.goToDashboard') || "Go to Dashboard"}
         <ArrowRight className="ml-2 h-4 w-4" />
       </Button>
 
       {/* New motivational call to action */}
       <p className="mt-4 text-sm text-solport-accent font-medium">
-        이제 SolPort와 함께 더 스마트한 투자 여정을 시작해보세요!
+        Start your smarter investment journey with SolPort now!
       </p>
     </div>
   );
