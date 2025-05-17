@@ -38,10 +38,10 @@ export function ChatInterface({ walletAddress, onConsultationComplete }: ChatInt
 
   // AI response hints based on conversation context
   const [responseHints, setResponseHints] = useState<string[]>([
-    "What is your target amount?",
-    "How long do you plan to invest?",
-    "How much can you contribute monthly?",
-    "What is your risk tolerance level? (1-10)",
+    "I want to save for retirement",
+    "I need funds for my child's education",
+    "I'm looking to buy a house in 10 years",
+    "I want to grow my wealth over time",
   ])
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -71,10 +71,10 @@ export function ChatInterface({ walletAddress, onConsultationComplete }: ChatInt
           // Update hints based on portfolio status
           if (data.has_portfolio) {
             setResponseHints([
-              "How would you like to adjust your current portfolio?",
-              "Would you like to change your target amount or timeline?",
-              "Do you want to adjust your monthly contribution?",
-              "Has your risk tolerance changed?",
+              "I want to adjust my portfolio",
+              "I want to add more assets",
+              "I want to change my risk profile",
+              "I want to withdraw some funds",
             ])
           }
         }
