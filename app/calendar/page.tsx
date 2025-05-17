@@ -19,7 +19,7 @@ export default function CalendarPage() {
       type: "alert",
       title: t("notifications.rebalancingAlert"),
       message: t("notifications.rebalancingMessage").replace("{percent}", "5.3"),
-      date: "2025-05-10 14:32",
+      date: "May 10, 2025 14:32",
       read: false,
       actionable: true,
       actionLabel: t("notifications.executeRebalancing"),
@@ -29,7 +29,7 @@ export default function CalendarPage() {
       type: "info",
       title: t("notifications.priceAlert"),
       message: t("notifications.priceMessage").replace("{percent}", "12.5"),
-      date: "2025-05-10 09:15",
+      date: "May 10, 2025 09:15",
       read: false,
     },
     {
@@ -37,7 +37,7 @@ export default function CalendarPage() {
       type: "info",
       title: t("notifications.apyUpdate"),
       message: t("notifications.apyMessage").replace("{percent}", "9.8").replace("{change}", "0.4"),
-      date: "2025-05-09 18:45",
+      date: "May 09, 2025 18:45",
       read: false,
     },
     {
@@ -45,7 +45,7 @@ export default function CalendarPage() {
       type: "success",
       title: t("notifications.contributionConfirmation"),
       message: t("notifications.contributionMessage"),
-      date: "2025-05-05 00:00",
+      date: "May 05, 2025 00:00",
       read: true,
     },
     {
@@ -53,7 +53,7 @@ export default function CalendarPage() {
       type: "success",
       title: t("notifications.goalUpdate"),
       message: t("notifications.goalMessage").replace("{percent}", "32").replace("{probability}", "92"),
-      date: "2025-05-01 12:00",
+      date: "May 01, 2025 12:00",
       read: true,
     },
   ])

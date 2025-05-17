@@ -132,7 +132,7 @@ export default function AutomationPage() {
                     <SelectContent className="bg-[#1a1e30] border-[#334155]">
                       <SelectItem value="monthly">{t("automationSettings.monthly")}</SelectItem>
                       <SelectItem value="quarterly">{t("automationSettings.quarterly")}</SelectItem>
-                      <SelectItem value="yearly">연별</SelectItem>
+                      <SelectItem value="yearly">{t("automationSettings.yearly")}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -147,8 +147,8 @@ export default function AutomationPage() {
                     </SelectTrigger>
                     <SelectContent className="bg-[#1a1e30] border-[#334155]">
                       <SelectItem value="5percent">{t("automationSettings.threshold5")}</SelectItem>
-                      <SelectItem value="10percent">10% 이상</SelectItem>
-                      <SelectItem value="15percent">15% 이상</SelectItem>
+                      <SelectItem value="10percent">Above 10%</SelectItem>
+                      <SelectItem value="15percent">Above 15%</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -191,13 +191,13 @@ export default function AutomationPage() {
                   </div>
                   <Select defaultValue="day5">
                     <SelectTrigger className="bg-[#273344] border-0 focus:ring-0 focus:ring-offset-0">
-                      <SelectValue placeholder="매월 5일" />
+                      <SelectValue placeholder={t("automationSettings.day5")} />
                     </SelectTrigger>
                     <SelectContent className="bg-[#1a1e30] border-[#334155]">
-                      <SelectItem value="day1">매월 1일</SelectItem>
-                      <SelectItem value="day5">매월 5일</SelectItem>
-                      <SelectItem value="day15">매월 15일</SelectItem>
-                      <SelectItem value="day25">매월 25일</SelectItem>
+                      <SelectItem value="day1">1st of month</SelectItem>
+                      <SelectItem value="day5">5th of month</SelectItem>
+                      <SelectItem value="day15">15th of month</SelectItem>
+                      <SelectItem value="day25">25th of month</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -227,9 +227,9 @@ export default function AutomationPage() {
                       <SelectValue placeholder={t("automationSettings.threshold80")} />
                     </SelectTrigger>
                     <SelectContent className="bg-[#1a1e30] border-[#334155]">
-                      <SelectItem value="70percent">70% 미만</SelectItem>
-                      <SelectItem value="80percent">80% 미만</SelectItem>
-                      <SelectItem value="90percent">90% 미만</SelectItem>
+                      <SelectItem value="70percent">Below 70%</SelectItem>
+                      <SelectItem value="80percent">Below 80%</SelectItem>
+                      <SelectItem value="90percent">Below 90%</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -243,9 +243,9 @@ export default function AutomationPage() {
                       <SelectValue placeholder={t("automationSettings.quarterly")} />
                     </SelectTrigger>
                     <SelectContent className="bg-[#1a1e30] border-[#334155]">
-                      <SelectItem value="monthly">월별</SelectItem>
-                      <SelectItem value="quarterly">분기별</SelectItem>
-                      <SelectItem value="yearly">연별</SelectItem>
+                      <SelectItem value="monthly">{t("automationSettings.monthly")}</SelectItem>
+                      <SelectItem value="quarterly">{t("automationSettings.quarterly")}</SelectItem>
+                      <SelectItem value="yearly">{t("automationSettings.yearly")}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -259,9 +259,9 @@ export default function AutomationPage() {
                       <SelectValue placeholder={t("automationSettings.autoSuggestion")} />
                     </SelectTrigger>
                     <SelectContent className="bg-[#1a1e30] border-[#334155]">
-                      <SelectItem value="auto">자동 제안 (수동 승인)</SelectItem>
-                      <SelectItem value="manual">수동 승인</SelectItem>
-                      <SelectItem value="full">완전 자동화</SelectItem>
+                      <SelectItem value="auto">Auto Suggestion (Manual Approval)</SelectItem>
+                      <SelectItem value="manual">Manual Approval</SelectItem>
+                      <SelectItem value="full">Fully Automated</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

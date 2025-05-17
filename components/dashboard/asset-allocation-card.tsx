@@ -21,7 +21,7 @@ export function AssetAllocationCard({ assetAllocation }: AssetAllocationCardProp
   return (
     <Card className="bg-solport-card border-0">
       <CardHeader>
-        <CardTitle className="text-lg font-medium">자산 분포</CardTitle>
+        <CardTitle className="text-lg font-medium">Asset Allocation</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col md:flex-row items-center justify-between">
         <div className="w-full md:w-3/5 h-64">

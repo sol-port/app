@@ -77,7 +77,7 @@ async function apiRequest<T>(endpoint: string, options: RequestInit = {}, retrie
 /**
  * Validate wallet address format
  */
-export function validateWalletAddress(address: string): boolean {
+function validateWalletAddress(address: string): boolean {
   return WALLET_CONFIG.addressRegex.test(address)
 }
 
@@ -325,7 +325,7 @@ function getAutomationStatus(automation: any[], title: string) {
 
 function generatePerformanceData() {
   // This is still mock data as it's not clear how to get this from the API
-  const months = ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"]
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
   return months.map((month, index) => ({
     month,
     value: 30 + index * 5,
@@ -341,7 +341,7 @@ function transformLstData(lstData: any[]) {
       apy: lst.apy || 0,
       apyBase: `${(lst.apy * 0.8).toFixed(1)}%`,
       mevBoost: `${(lst.apy * 0.2).toFixed(1)}%`,
-      status: lst.apy > 0 ? "활성화" : "비활성화 중",
+      status: lst.apy > 0 ? "Active" : "Inactive",
     }))
   } catch (error) {
     console.error("Error transforming LST data:", error)
@@ -369,9 +369,9 @@ function getMockPortfolioData() {
       { symbol: "JitoSOL", percentage: 10, color: "#DCD3FF" },
     ],
     aiInsights: {
-      marketAnalysis: "솔라나 DeFi TVL 8.2% 상승",
-      portfolioRecommendation: "JitoSOL 비중 5% 추가 고려",
-      riskAlert: "SOL 가격 3% 하락",
+      marketAnalysis: "Solana DeFi TVL increased by 8.2%",
+      portfolioRecommendation: "Consider adding 5% to JitoSOL allocation",
+      riskAlert: "SOL price decreased by 3%",
     },
     portfolioSettings: {
       autoRebalancing: true,
@@ -379,18 +379,18 @@ function getMockPortfolioData() {
       goalProgress: true,
     },
     performanceData: [
-      { month: "1월", value: 30 },
-      { month: "2월", value: 25 },
-      { month: "3월", value: 35 },
-      { month: "4월", value: 40 },
-      { month: "5월", value: 45 },
-      { month: "6월", value: 55 },
-      { month: "7월", value: 65 },
-      { month: "8월", value: 60 },
-      { month: "9월", value: 70 },
-      { month: "10월", value: 75 },
-      { month: "11월", value: 80 },
-      { month: "12월", value: 85 },
+      { month: "Jan", value: 30 },
+      { month: "Feb", value: 25 },
+      { month: "Mar", value: 35 },
+      { month: "Apr", value: 40 },
+      { month: "May", value: 45 },
+      { month: "Jun", value: 55 },
+      { month: "Jul", value: 65 },
+      { month: "Aug", value: 60 },
+      { month: "Sep", value: 70 },
+      { month: "Oct", value: 75 },
+      { month: "Nov", value: 80 },
+      { month: "Dec", value: 85 },
     ],
     lstStaking: [
       {
@@ -398,21 +398,21 @@ function getMockPortfolioData() {
         apy: 9.8,
         apyBase: "8.2%",
         mevBoost: "3.6%",
-        status: "활성화",
+        status: "Active",
       },
       {
         token: "mSOL",
         apy: 0,
         apyBase: "6.5%",
         mevBoost: "0%",
-        status: "비활성화 중",
+        status: "Inactive",
       },
       {
         token: "bSOL",
         apy: 0,
         apyBase: "7.1%",
         mevBoost: "0%",
-        status: "위험성 증가",
+        status: "Increased Risk",
       },
     ],
   }

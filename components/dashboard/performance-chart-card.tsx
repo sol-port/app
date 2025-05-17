@@ -11,21 +11,36 @@ interface PerformanceChartCardProps {
 }
 
 export function PerformanceChartCard({ performanceData }: PerformanceChartCardProps) {
-  // Ensure September and November are included in the data
-  const months = ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"]
+  // Convert Korean month names to English
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+  const data = months.map((month, index) => ({
+    month: months[index],
+  }))
+
+  // Map the data to use English month names
+  /*
+  const translatedData = performanceData.map((item) => {
+    // Extract the month number from Korean format (e.g., "1월" -> 1)
+    const monthNumber = Number.parseInt(item.month.replace("월", "")) - 1
+    return {
+      ...item,
+      month: months[monthNumber],
+    }
+  })
+  */
 
   return (
     <Card className="bg-solport-card border-0">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-medium">포트폴리오 성과</CardTitle>
+          <CardTitle className="text-lg font-medium">Portfolio Performance</CardTitle>
         </div>
       </CardHeader>
       <CardContent>
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart
-              data={performanceData}
+              data={data}
               margin={{
                 top: 5,
                 right: 30,
@@ -34,7 +49,7 @@ export function PerformanceChartCard({ performanceData }: PerformanceChartCardPr
               }}
             >
               <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={true} />
-              <XAxis dataKey="month" stroke="#A0AEC0" tickFormatter={(value) => value} ticks={months} />
+              <XAxis dataKey="month" stroke="#A0AEC0" />
               <YAxis stroke="#A0AEC0" />
               <Tooltip
                 contentStyle={{
@@ -57,18 +72,18 @@ export function PerformanceChartCard({ performanceData }: PerformanceChartCardPr
 
         <div className="grid grid-cols-3 gap-4 mt-4">
           <div className="px-3 py-2 bg-[#273344] rounded-md text-center">
-            <div className="text-sm text-solport-textSecondary">총 수익률</div>
+            <div className="text-sm text-solport-textSecondary">Total Return</div>
             <div className="text-lg font-bold text-solport-success mt-1">+24.8%</div>
           </div>
 
           <div className="px-3 py-2 bg-[#273344] rounded-md text-center">
-            <div className="text-sm text-solport-textSecondary">연간 수익률</div>
+            <div className="text-sm text-solport-textSecondary">Annual Return</div>
             <div className="text-lg font-bold text-solport-success mt-1">+13.2%</div>
           </div>
 
           <div className="px-3 py-2 bg-[#273344] rounded-md text-center">
-            <div className="text-sm text-solport-textSecondary">목표 대비 지표</div>
-            <div className="text-lg font-bold text-solport-success mt-1">목표 초과 3.2%</div>
+            <div className="text-sm text-solport-textSecondary">Target Comparison</div>
+            <div className="text-lg font-bold text-solport-success mt-1">Exceeding target by 3.2%</div>
           </div>
         </div>
       </CardContent>

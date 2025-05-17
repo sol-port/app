@@ -11,6 +11,7 @@ interface AppState {
   setConsultationCompleted: (completed: boolean) => void
   setConsultationResult: (result: any) => void
   resetConsultation: () => void
+  isMockPortfolio: boolean
 }
 
 const AppStateContext = createContext<AppState | undefined>(undefined)
@@ -19,21 +20,37 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const { connected, publicKey } = useWallet()
   const [isConsultationCompleted, setIsConsultationCompletedState] = useState(false)
   const [consultationResult, setConsultationResultState] = useState<any | null>(null)
+  const [isMockPortfolio, setIsMockPortfolio] = useState(false)
 
-  // Check cookies for consultation status on initial load
+  // Check cookies and localStorage for consultation status on initial load
   useEffect(() => {
     const storedStatus = getCookie("isConsultationCompleted")
     const storedResult = getCookie("consultationResult")
+    const mockStatus =
+      typeof window !== "undefined" ? localStorage.getItem("solport-mock-consultation-completed") : null
+    const mockResult = typeof window !== "undefined" ? localStorage.getItem("solport-mock-portfolio") : null
 
-    if (storedStatus === "true") {
-      setIsConsultationCompletedState(true)
-    }
-
-    if (storedResult) {
+    // First check for mock data (higher priority)
+    if (mockStatus === "true" && mockResult) {
       try {
-        setConsultationResultState(JSON.parse(storedResult))
+        setIsConsultationCompletedState(true)
+        setConsultationResultState(JSON.parse(mockResult))
+        setIsMockPortfolio(true)
       } catch (e) {
-        console.error("Failed to parse stored consultation result", e)
+        console.error("Failed to parse stored mock consultation result", e)
+      }
+    }
+    // Then check for regular cookie data
+    else if (storedStatus === "true") {
+      setIsConsultationCompletedState(true)
+
+      if (storedResult) {
+        try {
+          setConsultationResultState(JSON.parse(storedResult))
+          setIsMockPortfolio(false)
+        } catch (e) {
+          console.error("Failed to parse stored consultation result", e)
+        }
       }
     }
   }, [])
@@ -48,31 +65,61 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
 
     if (consultationResult) {
       setCookie("consultationResult", JSON.stringify(consultationResult))
+
+      // If this is a mock portfolio, also store in localStorage
+      if (isMockPortfolio && typeof window !== "undefined") {
+        localStorage.setItem("solport-mock-consultation-completed", "true")
+        localStorage.setItem("solport-mock-portfolio", JSON.stringify(consultationResult))
+      }
     } else {
       removeCookie("consultationResult")
     }
-  }, [isConsultationCompleted, consultationResult])
+  }, [isConsultationCompleted, consultationResult, isMockPortfolio])
 
   // Reset consultation data when wallet is disconnected
   useEffect(() => {
     if (!connected && (isConsultationCompleted || consultationResult)) {
-      resetConsultation()
+      // Don't reset mock portfolios when wallet disconnects
+      if (!isMockPortfolio) {
+        resetConsultation()
+      }
     }
-  }, [connected, isConsultationCompleted, consultationResult])
+  }, [connected, isConsultationCompleted, consultationResult, isMockPortfolio])
 
   const setConsultationCompleted = (completed: boolean) => {
     setIsConsultationCompletedState(completed)
   }
 
   const setConsultationResult = (result: any) => {
+    // Check if this is a mock portfolio (has MOCK in the portfolio_id)
+    const isMock = result?.model_output?.portfolio_id?.includes("MOCK") || false
+    setIsMockPortfolio(isMock)
     setConsultationResultState(result)
   }
 
   const resetConsultation = () => {
     setIsConsultationCompletedState(false)
     setConsultationResultState(null)
+    setIsMockPortfolio(false)
     removeCookie("isConsultationCompleted")
     removeCookie("consultationResult")
+
+    // Clear localStorage items related to consultation
+    if (typeof window !== "undefined") {
+      const keysToRemove = []
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i)
+        if (
+          key &&
+          (key.startsWith("solport-consultation") ||
+            key.startsWith("solport-portfolio") ||
+            key.startsWith("solport-mock"))
+        ) {
+          keysToRemove.push(key)
+        }
+      }
+      keysToRemove.forEach((key) => localStorage.removeItem(key))
+    }
   }
 
   return (
@@ -84,6 +131,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         setConsultationCompleted,
         setConsultationResult,
         resetConsultation,
+        isMockPortfolio,
       }}
     >
       {children}

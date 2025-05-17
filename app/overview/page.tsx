@@ -4,7 +4,6 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useWallet } from "@solana/wallet-adapter-react"
 import DashboardLayout from "../dashboard-layout"
-import { validateWalletAddress } from "@/lib/api/client"
 import { getPortfolioData } from "@/lib/api/client"
 import type { PortfolioData } from "@/lib/api/portfolio" // Keep the type import
 import { AssetSummaryCard } from "@/components/dashboard/asset-summary-card"
@@ -41,10 +40,6 @@ export default function OverviewPage() {
       // Validate the address format before making the API call
       const mockAddress = "5Uj9vWwTGYTGYvs8XgXUhsgmKNtCk8hbVnrQ9ExKJJQa"
       const walletAddress = publicKey?.toString() || mockAddress
-      if (validateWalletAddress(walletAddress)) {
-        throw new Error("Invalid wallet address format")
-      }
-
       const data = await getPortfolioData(walletAddress)
       setPortfolioData(data)
     } catch (error) {
@@ -64,7 +59,7 @@ export default function OverviewPage() {
   }
 
   return (
-    <DashboardLayout title="내 포트폴리오">
+    <DashboardLayout title="My Portfolio">
       {error ? (
         <Alert variant="destructive" className="mb-4">
           <AlertCircle className="h-4 w-4" />

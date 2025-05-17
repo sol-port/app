@@ -12,7 +12,7 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "SolPort - Solana Portfolio Manager",
   description: "A Solana-based portfolio application for managing and monitoring your crypto assets",
-    generator: 'v0.dev'
+  generator: "v0.dev",
 }
 
 export default function RootLayout({
