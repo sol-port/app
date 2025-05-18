@@ -18,7 +18,14 @@ const nextConfig = {
       },
     ],
     unoptimized: true,
+    dangerouslyAllowSVG: true,
   },
-}
+  rewrites: async () => [
+    {
+      source: '/api/:path*',
+      destination: 'http://43.201.47.189:8001/api/:path*',
+    },
+  ],
+};
 
-export default nextConfig
+export default nextConfig;

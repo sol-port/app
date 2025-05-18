@@ -95,7 +95,7 @@ export default function GoalsPage() {
           <Progress
             value={progress}
             className="h-4 mb-4 bg-[#334155]"
-            indicatorClassName="bg-solport-accent transition-all duration-1000 ease-out"
+            /* indicatorClassName="bg-solport-accent transition-all duration-1000 ease-out" */
           />
 
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">

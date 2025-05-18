@@ -16,12 +16,14 @@ export const ko_KR: Record<string, string> = {
   "header.selectLanguage": "언어 선택",
   "header.walletAddress": "지갑 주소",
   "header.disconnect": "연결 해제",
+  "header.noWalletConnected": "지갑이 연결되지 않았습니다",
+  "header.connectWallet": "지갑 연결",
 
   // Wallet Connection
   "wallet.title": "지갑 연결",
   "wallet.description": "솔라나 지갑을 연결하여 AI 포트폴리오를 만드세요",
-  "wallet.subtitle":
-    "AI 투자 상담사와 함께 포트폴리오를 만들고 강력한 전략을 실행해보세요! 솔라나 지갑을 연결하면 다음의 기능이 활성화 됩니다.",
+  "wallet.subtitle1": "AI 투자 상담사와 함께 포트폴리오를 만들고 강력한 전략을 실행해보세요!",
+  "wallet.subtitle2": "솔라나 지갑을 연결하면, 다음 기능이 활성화 됩니다:",
   "wallet.feature1": "SOL 초기 투자금을 위한 포트폴리오 내용과 기능 제안",
   "wallet.feature2": "SOL 매월 자동 투자 설정 (지정된 날짜에 자동 집행됨)",
   "wallet.feature3": "내 포트폴리오 실시간 모니터링",
@@ -95,15 +97,15 @@ export const ko_KR: Record<string, string> = {
   // Setup Complete
   "setup.title": "포트폴리오 설정 완료!",
   "setup.description": "초기 포트폴리오 설정이 완료되었으며 축하드립니다!",
-  "setup.transaction": "트랜잭션 성공: #{id}",
+  "setup.transaction": "트랜잭션 성공:",
   "setup.explorer": "솔라나 익스플로러에서 확인",
   "setup.view": "Solscan에서 보기",
-  "setup.features": "솔포트 대시보드의 주요 기능들",
+  "setup.features": "SolPort 포트폴리오의 주요 기능들",
   "setup.feature1": "현재 자산 배분 및 총 가치 / 실시간 변동률",
   "setup.feature2": "목표 달성 진행 상황 / 실시간 업데이트",
   "setup.feature3": "월별 자동 투자 / 자산 재조정 설정",
-  "setup.feature4": "수익 그래프 / 자산별 성과 비교 / 시뮬레이션 대비 실제 성과",
-  "setup.dashboard": "내 포트폴리오(대시보드)로 이동",
+  "setup.feature4": "수익 그래프 / 자산별 성과 비교",
+  "setup.dashboard": "내 포트폴리오로 이동",
   "setup.motivation": "이제 SolPort와 함께 더 스마트한 투자 여정을 시작해보세요!",
 
   // Dashboard
@@ -218,7 +220,7 @@ export const ko_KR: Record<string, string> = {
   "automationSettings.adjustmentType": "전략 조정 유형",
   "automationSettings.threshold80": "80% 미만",
   "automationSettings.quarterly": "분기별",
-  "automationSettings.yearly": "연도별",
+  "automationSettings.yearly": "연별",
   "automationSettings.autoSuggestion": "자동 제안 (수동 승인)",
   "automationSettings.note": "* 목표 달성 확률이 설정 임계값 아래로 떨어져야 전략 조정 옵션이 제안됩니다.",
   "automationSettings.saveSettings": "설정 저장",

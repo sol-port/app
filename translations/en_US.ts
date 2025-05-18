@@ -16,12 +16,14 @@ export const en_US: Record<string, string> = {
   "header.selectLanguage": "Select Language",
   "header.walletAddress": "Wallet Address",
   "header.disconnect": "Disconnect",
+  "header.noWalletConnected": "No wallet connected",
+  "header.connectWallet": "Connect Wallet",
 
   // Wallet Connection
   "wallet.title": "Connect Wallet",
   "wallet.description": "Connect your Solana wallet to create an AI portfolio",
-  "wallet.subtitle":
-    "Create a portfolio with our AI investment advisor and execute powerful strategies! Connect your Solana wallet to activate the following features:",
+  "wallet.subtitle1": "Create a portfolio with our AI investment advisor and execute powerful strategies!",
+  "wallet.subtitle2": "Connect your Solana wallet to activate the following features:",
   "wallet.feature1": "Portfolio suggestions and features for your initial SOL investment",
   "wallet.feature2": "Automatic monthly SOL investment setup (executed on specified dates)",
   "wallet.feature3": "Real-time monitoring of your portfolio",
@@ -96,15 +98,15 @@ export const en_US: Record<string, string> = {
   // Setup Complete
   "setup.title": "Portfolio Setup Complete!",
   "setup.description": "Initial portfolio setup is complete, congratulations!",
-  "setup.transaction": "Transaction Success: #{id}",
+  "setup.transaction": "Transaction Success:",
   "setup.explorer": "Check in Solana Explorer",
   "setup.view": "View on Solscan",
-  "setup.features": "Key Features of the SolPort Dashboard",
+  "setup.features": "Key Features of the SolPort Portfolio",
   "setup.feature1": "Current asset allocation and total value / real-time fluctuation rate",
   "setup.feature2": "Goal achievement progress / real-time updates",
   "setup.feature3": "Monthly automatic investment / asset rebalancing settings",
-  "setup.feature4": "Profit graph / asset performance comparison / actual performance vs. simulation",
-  "setup.dashboard": "Go to Dashboard",
+  "setup.feature4": "Profit graph / asset performance comparison",
+  "setup.dashboard": "Go to My Portfolio",
   "setup.motivation": "Start your smarter investment journey with SolPort now!",
 
   // Dashboard
@@ -211,7 +213,6 @@ export const en_US: Record<string, string> = {
   "automationSettings.monthly": "Monthly",
   "automationSettings.threshold5": "5% or more",
   "automationSettings.autoContribution": "Auto Contribution",
-  "automationSettings.contributionAmount": '  "Auto Contribution',
   "automationSettings.contributionAmount": "Contribution Amount",
   "automationSettings.contributionDate": "Contribution Date",
   "automationSettings.goalStrategy": "Goal-based Strategy Adjustment",

@@ -78,7 +78,7 @@ pnpm start
 2. 환경 변수를 Vercel 프로젝트 설정에 추가합니다:
    - `NEXT_PUBLIC_API_BASE_URL`
    - `BACKEND_API_URL`
-   - `NEXT_PUBLIC_BASE_URL` (배포된 도메인 URL, 예: https://sol-port.vercel.app)
+   - `NEXT_PUBLIC_BASE_URL` (배포된 도메인 URL, 예: https://sol-port-app.vercel.app)
 3. 배포를 진행합니다.
 
 ### 이미지 로딩 문제 해결
@@ -176,7 +176,7 @@ sol-port-app/
 | ------------------------ | ---------------------------------------- | ------------------------------- |
 | NEXT_PUBLIC_API_BASE_URL | 프론트엔드에서 접근 가능한 API 기본 URL  | http://api.example.com          |
 | BACKEND_API_URL          | 백엔드 전용 API URL                      | http://internal-api.example.com |
-| NEXT_PUBLIC_BASE_URL     | 프론트엔드 기본 URL (이미지 로딩에 중요) | https://sol-port.vercel.app     |
+| NEXT_PUBLIC_BASE_URL     | 프론트엔드 기본 URL (이미지 로딩에 중요) | https://sol-port-app.vercel.app |
 
 ## 이미지 최적화
 

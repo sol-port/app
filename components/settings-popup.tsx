@@ -70,7 +70,9 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
       onClose()
 
       // Redirect to chat page
-      router.push("/chat")
+      setTimeout(() => {
+        router.push("/chat")
+      }, 100)
     } catch (error) {
       console.error("Error disconnecting wallet:", error)
     }
@@ -111,7 +113,9 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
               className="bg-solport-accent hover:bg-solport-accent2 mt-2"
               onClick={() => {
                 onClose()
-                router.push("/chat")
+                setTimeout(() => {
+                  router.push("/chat")
+                }, 100)
               }}
             >
               {t("header.connectWallet")}

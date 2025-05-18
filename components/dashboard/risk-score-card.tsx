@@ -61,7 +61,7 @@ export function RiskScoreCard({ riskScore, riskScoreMax }: RiskScoreCardProps) {
         <Progress
           value={percentage}
           className="h-2 mt-2 bg-[#334155]"
-          indicatorClassName="bg-solport-accent transition-all duration-1000 ease-out"
+          /* indicatorClassName="bg-solport-accent transition-all duration-1000 ease-out" */
         />
         <div className="text-sm text-solport-textSecondary mt-2">Within target risk</div>
       </CardContent>

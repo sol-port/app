@@ -78,7 +78,7 @@ pnpm start
 2. Add environment variables in your Vercel project settings:
    - `NEXT_PUBLIC_API_BASE_URL`
    - `BACKEND_API_URL`
-   - `NEXT_PUBLIC_BASE_URL` (deployed domain URL, e.g., https://sol-port.vercel.app)
+   - `NEXT_PUBLIC_BASE_URL` (deployed domain URL, e.g., https://sol-port-app.vercel.app)
 3. Deploy the project.
 
 ### Resolving Image Loading Issues
@@ -176,7 +176,7 @@ sol-port-app/
 | ------------------------ | ----------------------------------------------- | ------------------------------- |
 | NEXT_PUBLIC_API_BASE_URL | API base URL accessible from the frontend       | http://api.example.com          |
 | BACKEND_API_URL          | Backend-only API URL                            | http://internal-api.example.com |
-| NEXT_PUBLIC_BASE_URL     | Frontend base URL (important for image loading) | https://sol-port.vercel.app     |
+| NEXT_PUBLIC_BASE_URL     | Frontend base URL (important for image loading) | https://sol-port-app.vercel.app |
 
 ## Image Optimization
 

@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Image, { type ImageProps } from "next/image"
-import { imageLoader, getPlaceholderImage } from "@/lib/image-loader"
+import { imageLoader } from "@/lib/image-loader"
 import { cn } from "@/lib/utils"
 
 interface OptimizedImageProps extends Omit<ImageProps, "loader"> {
@@ -21,19 +21,18 @@ export function OptimizedImage({
   imgClassName,
   ...props
 }: OptimizedImageProps) {
-  const [error, setError] = useState(false)
-
-  const imageSrc = error ? getPlaceholderImage(Number(width), Number(height), fallbackText || alt) : src
+  // const [error, setError] = useState(false)
+  // const imageSrc = error ? getPlaceholderImage(Number(width), Number(height), fallbackText || alt) : src
 
   return (
     <div className={cn("relative overflow-hidden", className)}>
       <Image
-        src={imageSrc || "/placeholder.svg"}
+        loader={imageLoader}
+        src={src || "/placeholder.svg"}
         alt={alt}
         width={width}
         height={height}
-        loader={imageLoader}
-        onError={() => setError(true)}
+        // onError={() => setError(true)}
         className={cn("object-cover", imgClassName)}
         {...props}
       />

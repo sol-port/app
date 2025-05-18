@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { useWallet } from "@solana/wallet-adapter-react"
 import { WalletConnection } from "@/components/consultation/wallet-connection"
 import { ChatInterface } from "@/components/consultation/chat-interface"
@@ -8,7 +9,6 @@ import { PortfolioConfirmation } from "@/components/consultation/portfolio-confi
 import { AutomationSettings } from "@/components/consultation/automation-settings"
 import { SetupComplete } from "@/components/consultation/setup-complete"
 import { useAppState } from "@/context/app-state-context"
-import { useRouter } from "next/navigation"
 import { useLanguage } from "@/context/language-context"
 
 // Define the consultation steps
@@ -59,11 +59,15 @@ export default function HomeChat() {
   // Handle setup completion
   const handleSetupComplete = () => {
     // Update global state
-    setConsultationCompleted(true)
     setGlobalResult(consultationResult)
 
-    // Redirect to overview page
-    router.push("/overview")
+    // Ensure consultation is marked as completed
+    setConsultationCompleted(true)
+
+    // Use setTimeout to ensure state is updated before navigation
+    setTimeout(() => {
+      router.push("/overview")
+    }, 100)
   }
 
   // Get wallet address
@@ -82,17 +86,17 @@ export default function HomeChat() {
         return (
           <PortfolioConfirmation
             result={consultationResult}
+            walletAddress={walletAddress}
             onConfirm={handlePortfolioConfirm}
             onRetry={handleRetry}
-            walletAddress={walletAddress}
           />
         )
 
       case STEPS.AUTOMATION_SETTINGS:
         return (
           <AutomationSettings
-            walletAddress={walletAddress}
             portfolioResult={consultationResult}
+            walletAddress={walletAddress}
             onComplete={handleAutomationComplete}
           />
         )
@@ -102,6 +106,7 @@ export default function HomeChat() {
           <SetupComplete
             portfolioId={consultationResult?.model_output?.portfolio_id || "42E...8d9B"}
             walletAddress={walletAddress}
+            onComplete={handleSetupComplete}
           />
         )
 
@@ -112,11 +117,11 @@ export default function HomeChat() {
 
   // Calculate progress percentage correctly
   const calculateProgressWidth = () => {
-    if (currentStep === 0) return "0%"
+    if (currentStep === 0) return "5%"
     const totalSteps = 4
-    const stepPercentage = 100 / (totalSteps - 1)
+    const stepPercentage = 90 / (totalSteps - 1)
     const stepIndex = Math.min(currentStep, totalSteps - 1)
-    return `${stepPercentage * stepIndex}%`
+    return `${(stepPercentage * stepIndex) + 5}%`
   }
 
   return (

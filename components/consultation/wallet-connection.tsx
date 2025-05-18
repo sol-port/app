@@ -68,7 +68,11 @@ export function WalletConnection({ onComplete }: WalletConnectionProps) {
       <p className="text-solport-textSecondary mb-6">{t("wallet.description")}</p>
 
       <div className="mb-6">
-        <p className="text-sm mb-4">{t("wallet.subtitle")}</p>
+        <p className="text-sm mb-4">
+          {t("wallet.subtitle1")}
+          <br />
+          {t("wallet.subtitle2")}
+        </p>
 
         <div className="space-y-2 mb-4">
           <div className="flex items-center text-sm">
