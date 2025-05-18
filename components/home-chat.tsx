@@ -28,12 +28,20 @@ export default function HomeChat() {
   const router = useRouter()
   const { t } = useLanguage()
 
-  // Move to chat step if wallet is already connected
+  // Handle wallet connection state
   useEffect(() => {
+    handleWalletConnect()
+  }, [connected, currentStep])
+
+  // Handle wallet connection
+  const handleWalletConnect = () => {
     if (connected && currentStep === STEPS.WALLET_CONNECTION) {
       setCurrentStep(STEPS.CHAT)
     }
-  }, [connected, currentStep])
+    if (!connected && currentStep !== STEPS.WALLET_CONNECTION) {
+      setCurrentStep(STEPS.WALLET_CONNECTION)
+    }
+  }
 
   // Handle consultation completion
   const handleConsultationComplete = (result: any) => {
@@ -67,6 +75,7 @@ export default function HomeChat() {
     // Use setTimeout to ensure state is updated before navigation
     setTimeout(() => {
       router.push("/overview")
+      router.refresh()
     }, 100)
   }
 
@@ -77,7 +86,7 @@ export default function HomeChat() {
   const renderStep = () => {
     switch (currentStep) {
       case STEPS.WALLET_CONNECTION:
-        return <WalletConnection onComplete={() => setCurrentStep(STEPS.CHAT)} />
+        return <WalletConnection onComplete={handleWalletConnect} />
 
       case STEPS.CHAT:
         return <ChatInterface walletAddress={walletAddress} onConsultationComplete={handleConsultationComplete} />

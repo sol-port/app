@@ -249,7 +249,7 @@ export function ChatInterface({
       setIsTyping(false);
       setTimeout(() => {
         inputRef.current?.focus();
-      }, 0);
+      }, 100);
     }
   };
 
@@ -314,7 +314,7 @@ export function ChatInterface({
       setIsTyping(false);
       setTimeout(() => {
         inputRef.current?.focus();
-      }, 0);
+      }, 100);
     }
   };
 
@@ -344,7 +344,7 @@ export function ChatInterface({
     setIsTyping(false);
     setTimeout(() => {
       inputRef.current?.focus();
-    }, 0);
+    }, 100);
   };
 
   // Generate a realistic mock portfolio

@@ -16,6 +16,7 @@ export default function HomePage() {
     // Only redirect if wallet is connected and consultation is completed
     if (isWalletConnected && isConsultationCompleted) {
       router.push("/overview")
+      router.refresh()
     }
   }, [router, isWalletConnected, isConsultationCompleted])
 

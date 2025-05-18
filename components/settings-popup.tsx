@@ -72,6 +72,7 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
       // Redirect to chat page
       setTimeout(() => {
         router.push("/chat")
+        router.refresh()
       }, 100)
     } catch (error) {
       console.error("Error disconnecting wallet:", error)
@@ -115,6 +116,7 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
                 onClose()
                 setTimeout(() => {
                   router.push("/chat")
+                  router.refresh()
                 }, 100)
               }}
             >

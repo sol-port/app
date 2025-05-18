@@ -33,8 +33,6 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
 
   // Check cookies and localStorage for consultation status on initial load
   useEffect(() => {
-    const storedStatus = getCookie('isConsultationCompleted');
-    const storedResult = getCookie('consultationResult');
     const mockStatus =
       typeof window !== 'undefined'
         ? localStorage.getItem('solport-mock-consultation-completed')
@@ -43,6 +41,8 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       typeof window !== 'undefined'
         ? localStorage.getItem('solport-mock-portfolio')
         : null;
+    const storedStatus = getCookie('isConsultationCompleted');
+    const storedResult = getCookie('consultationResult');
 
     // First check for mock data (higher priority)
     if (mockStatus === 'true' && mockResult) {
@@ -68,6 +68,17 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       }
     }
   }, []);
+
+  // Update wallet connection state
+  useEffect(() => {
+    if (connected) {
+      setCookie('isWalletConnected', 'true');
+      setCookie('walletAddress', publicKey?.toBase58() || '');
+    } else {
+      removeCookie('isWalletConnected');
+      removeCookie('walletAddress');
+    }
+  }, [connected, publicKey]);
 
   // Update cookies when consultation status changes
   useEffect(() => {

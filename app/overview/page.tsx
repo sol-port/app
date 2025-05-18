@@ -56,6 +56,7 @@ export default function OverviewPage() {
 
   const handleCreatePortfolio = () => {
     router.push("/chat")
+    router.refresh()
   }
 
   return (

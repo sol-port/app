@@ -17,7 +17,6 @@ interface WalletConnectionProps {
 
 export function WalletConnection({ onComplete }: WalletConnectionProps) {
   const { connected, publicKey } = useWallet()
-  const [isConnecting, setIsConnecting] = useState(false)
   const [hasExistingPortfolio, setHasExistingPortfolio] = useState(false)
   const [isCheckingPortfolio, setIsCheckingPortfolio] = useState(false)
   const { t } = useLanguage()

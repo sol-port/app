@@ -12,13 +12,13 @@ export function middleware(request: NextRequest) {
   }
 
   // Get state information from cookies
-  const walletAddress = request.cookies.get("walletAddress")?.value
+  const isWalletConnected = request.cookies.get("isWalletConnected")?.value === "true"
   const isConsultationCompleted = request.cookies.get("isConsultationCompleted")?.value === "true"
 
   // Protected page access control - simplified
   if (path !== "/" && !path.startsWith("/api") && !path.startsWith("/_next")) {
     // If wallet is not connected, redirect to home
-    if (!walletAddress) {
+    if (!isWalletConnected) {
       return NextResponse.redirect(new URL("/", request.url))
     }
 

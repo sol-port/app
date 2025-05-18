@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Check, ArrowRight, ExternalLink } from "lucide-react"
 import { useLanguage } from "@/context/language-context"
-import { useAppState } from "@/context/app-state-context"
 
 interface SetupCompleteProps {
   portfolioId: string
@@ -15,7 +14,6 @@ interface SetupCompleteProps {
 export function SetupComplete({ portfolioId, walletAddress, onComplete }: SetupCompleteProps) {
   const router = useRouter()
   const { t } = useLanguage()
-  const { setConsultationCompleted } = useAppState()
 
   // Generate Solscan URL for the wallet address
   const solscanUrl = `https://solscan.io/account/${walletAddress}`
